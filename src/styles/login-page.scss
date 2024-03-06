@@ -1,0 +1,28 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 92vh;
+  background: #80808021;
+
+  .login-container {
+    display: flex;
+    border-radius: 20px;
+    box-shadow: 0 0 3px 1px #0000000f;
+    overflow: hidden;
+    justify-content: space-between;
+    background: white;
+
+    .form-container {
+      margin: auto;
+      align-self: center;
+      padding: 20px;
+      width: 35%;
+    }
+    img {
+      width: 50%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+    }
+  }
+}

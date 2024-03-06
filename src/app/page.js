@@ -1,95 +1,116 @@
-import Image from "next/image";
+"use client";
+import Diversity1Icon from "@mui/icons-material/Diversity1";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import CleanHandsIcon from "@mui/icons-material/CleanHands";
+import AdsClickIcon from "@mui/icons-material/AdsClick";
+const aboutUs = {
+  title: "Welcome to our clinic - Laser Hair Removal Treatment Center!",
+  main: [
+    {
+      id: "p1",
+      p: "Our clinic is a small and intimate establishment specializing in laser hair removal treatments. We believe in a personal and warm approach to every client, and we are committed to providing you with the best service in a pleasant and personal atmosphere.",
+    },
+    {
+      id: "p2",
+      p: "We invite you to join us and enjoy our professional and personal service, for a worry-free experience with impressive results. ",
+    },
+  ],
+};
+
+const whyChooseUs = {
+  title: "Why choose us ?",
+  listContent: [
+    {
+      title: "Holistic approach by experts",
+      icon: <Diversity1Icon fontSize="large" sx={{ color: "#ffc65c" }} />,
+      content:
+        "Our clinic takes a holistic approach to laser hair removal, where our expert team considers individual needs and concerns, ensuring a comprehensive and personalized treatment experience.",
+    },
+    {
+      title: "Customized treatment plan",
+      icon: <EventAvailableIcon fontSize="large" sx={{ color: "#ffc65c" }} />,
+      content:
+        "Each client receives a customized treatment plan tailored to their unique hair type, skin tone, and desired outcome, guaranteeing optimal results and satisfaction.",
+    },
+    {
+      title: "Keeping clean and sterilized",
+      icon: <CleanHandsIcon fontSize="large" sx={{ color: "#ffc65c" }} />,
+      content:
+        "We prioritize cleanliness and sterilization in every aspect of our clinic, maintaining rigorous standards to ensure a safe and hygienic environment for all our clients.",
+    },
+    {
+      title: "Availability and easy access",
+      icon: <AdsClickIcon fontSize="large" sx={{ color: "#ffc65c" }} />,
+      content:
+        "With convenient online scheduling, we offer flexible appointment availability for our clients, ensuring easy access to our services at their preferred times.",
+    },
+  ],
+};
+import { Button, Stack, Typography } from "@mui/material";
 import styles from "./page.module.css";
+import { ThemeProvider } from "@emotion/react";
+import { buttonTheme, typographyTheme } from "@/styles/theme/muiTheme";
 
 export default function Home() {
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+      <section className="home-page">
+        <div className="introduction">
+          <div className="text-container">
+            <ThemeProvider theme={typographyTheme}>
+              <Typography variant="h2">{aboutUs.title}</Typography>
+              {aboutUs.main.map((p) => (
+                <Typography key={p.id} variant="paragraphLightColor">
+                  {p.p}
+                </Typography>
+              ))}
+            </ThemeProvider>
+            <ThemeProvider theme={buttonTheme}>
+              <Stack spacing={2} direction="row">
+                <Button
+                  variant="contained"
+                  color="mustered"
+                  sx={{ textTransform: "none" }}
+                >
+                  Contact us
+                </Button>
+                <Button
+                  variant="text"
+                  color="black"
+                  sx={{ textTransform: "none" }}
+                >
+                  Our treatments
+                </Button>
+              </Stack>
+            </ThemeProvider>
+          </div>
+          <div className="image-container">
+            <img src="/images/home-page-img2.png" />
+          </div>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+        <div className="why-choose-us">
+          <Typography id="choose-us-title" variant="h2">
+            {whyChooseUs.title}
+          </Typography>
+          <div className="list-content">
+            {whyChooseUs.listContent.map((reason, index) => {
+              return (
+                <div key={index} className="content">
+                  <div className="icon">{reason.icon}</div>
+                  <ThemeProvider theme={typographyTheme}>
+                    <Typography variant="h5" mt={"5px"} mb={"15px"}>
+                      {reason.title}
+                    </Typography>
+                    <Typography variant="paragraphLightColor">
+                      {reason.content}
+                    </Typography>
+                  </ThemeProvider>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

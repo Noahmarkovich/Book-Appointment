@@ -1,0 +1,42 @@
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 6rem;
+  height: 8vh;
+  box-shadow: inset 0 -1px 0 0 #eaeaea;
+
+  .navigation-container {
+    display: flex;
+    height: inherit;
+    align-items: center;
+    gap: 80px;
+
+    .logo-container {
+      height: inherit;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      .logo {
+        height: 100%;
+      }
+      h2 {
+        font-family: Pacifico-Regular;
+      }
+    }
+    .links-container {
+      display: flex;
+      gap: 20px;
+
+      a {
+        font-weight: 500;
+        color: $paragraph-light-color;
+        transition: color 0.15s ease;
+
+        &:hover {
+          color: black;
+        }
+      }
+    }
+  }
+}
