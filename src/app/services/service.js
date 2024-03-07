@@ -10,7 +10,7 @@ function setPatients() {
         id: "u1",
         fullName: "Noah Markovich",
         email: "noahm93@gmail.com",
-        phone: "0501234567",
+        phoneNumber: "0501234567",
         password: "noah123",
         avatar: {
           initials: "NM",
@@ -21,7 +21,7 @@ function setPatients() {
         id: "u2",
         fullName: "Dina Dan",
         email: "dinad@gmail.com",
-        phone: "0501234568",
+        phoneNumber: "0501234568",
         password: "dina123",
         avatar: {
           initials: "DD",
@@ -32,7 +32,7 @@ function setPatients() {
         id: "u3",
         fullName: "Dana Banana",
         email: "danab@gmail.com",
-        phone: "0501234569",
+        phoneNumber: "0501234569",
         password: "dana123",
         avatar: {
           initials: "DB",
@@ -72,10 +72,26 @@ function setPatientsTreatments() {
         price: 200,
       },
       {
+        treatmentId: "t3",
+        patientId: "u2",
+        assignedBy: "admin1",
+        label: "ידיים",
+        duration: 45,
+        price: 200,
+      },
+      {
+        treatmentId: "t3",
+        patientId: "u3",
+        assignedBy: "admin1",
+        label: "ידיים",
+        duration: 45,
+        price: 200,
+      },
+      {
         assignedBy: "admin1",
         duration: 15,
         label: "פגישת ייעוץ",
-        patientId: "3VNXrp",
+        patientId: "P8EamK",
         price: 0,
         treatmentId: "t7",
       },
@@ -112,6 +128,14 @@ function setAppointments() {
     ];
     saveToStorage("appointmentsDB", appointments);
   }
+}
+
+export function getPatients() {
+  let patients = loadFromStorage("patientDB");
+  return patients.map((patient) => {
+    delete patient.password;
+    return patient;
+  });
 }
 
 export function getAppointments(patientId) {
@@ -179,6 +203,11 @@ export function getPatientTreatments(patientId) {
     (treatment) => treatment.patientId === patientId
   );
   return patientTreatments;
+}
+export function getPatientsTreatments() {
+  const patientsTreatments = loadFromStorage("patientsTreatmentsDB");
+
+  return patientsTreatments;
 }
 
 export function addPatient(credentials) {
