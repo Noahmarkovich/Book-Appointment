@@ -16,6 +16,111 @@ function setPatients() {
           initials: "NM",
           color: "rgb(103, 58, 183)",
         },
+        treatments: [
+          {
+            treatmentId: "t1",
+            assignedBy: "admin1",
+            label: "בית שחי",
+            duration: 30,
+            price: 200,
+          },
+          {
+            treatmentId: "t2",
+            assignedBy: "admin1",
+            label: "רגליים",
+            duration: 60,
+            price: 400,
+          },
+          {
+            treatmentId: "t3",
+            assignedBy: "admin1",
+            label: "ידיים",
+            duration: 45,
+            price: 200,
+          },
+        ],
+        appointments: [
+          {
+            id: "a1",
+            title: "רגליים",
+            start: "2024-03-05" + "T16:00:00",
+            end: "2024-03-05" + "T17:00:00",
+          },
+          {
+            id: "a4",
+            title: "בית שחי",
+            start: "2024-03-06" + "T10:00:00",
+            end: "2024-03-06" + "T11:00:00",
+          },
+        ],
+      },
+      {
+        id: "u2",
+        fullName: "Dina Dan",
+        email: "dinad@gmail.com",
+        phoneNumber: "0501234568",
+        password: "dina123",
+        avatar: {
+          initials: "DD",
+          color: "rgb(255, 87, 34)",
+        },
+        treatments: [
+          {
+            treatmentId: "t3",
+            assignedBy: "admin1",
+            label: "ידיים",
+            duration: 45,
+            price: 200,
+          },
+        ],
+        appointments: [
+          {
+            id: "a3",
+            title: "רגליים",
+            start: "2024-03-04" + "T10:00:00",
+            end: "2024-03-04" + "T11:00:00",
+          },
+        ],
+      },
+      {
+        id: "u3",
+        fullName: "Dana Banana",
+        email: "danab@gmail.com",
+        phoneNumber: "0501234569",
+        password: "dana123",
+        avatar: {
+          initials: "DB",
+          color: "blue",
+        },
+        treatments: [
+          {
+            assignedBy: "admin1",
+            duration: 15,
+            label: "פגישת ייעוץ",
+            price: 0,
+            treatmentId: "t7",
+          },
+        ],
+      },
+    ];
+    saveToStorage("patientDB", patients);
+  }
+}
+
+function setPatientsTable() {
+  let patients = loadFromStorage("patientDB");
+  if (!patients) {
+    patients = [
+      {
+        id: "u1",
+        fullName: "Noah Markovich",
+        email: "noahm93@gmail.com",
+        phoneNumber: "0501234567",
+        password: "noah123",
+        avatar: {
+          initials: "NM",
+          color: "rgb(103, 58, 183)",
+        },
       },
       {
         id: "u2",
@@ -203,6 +308,48 @@ export function getPatientTreatments(patientId) {
     (treatment) => treatment.patientId === patientId
   );
   return patientTreatments;
+}
+
+export function removePatient(patientId) {
+  const patients = loadFromStorage("patientDB");
+  const updatedPatients = patients.filter(
+    (patient) => patient.id !== patientId
+  );
+  saveToStorage("patientDB", updatedPatients);
+  return updatedPatients;
+}
+
+export function getPatientById(patientId) {
+  const patients = loadFromStorage("patientDB");
+  const patient = patients.find((patient) => patient.id === patientId);
+  return patient;
+}
+
+export function updatePatientTreatments(patientId, treatments) {
+  let patients = loadFromStorage("patientDB");
+  let patient = getPatientById(patientId);
+
+  const updatedTreatments = treatments.map((treatment) => {
+    if (!treatment.assignedBy) {
+      const { duration, id, price, type } = treatment;
+      const newTreatment = {
+        treatmentId: id,
+        duration,
+        price,
+        label: type,
+        assignedBy: "admin1",
+      };
+      return newTreatment;
+    } else return treatment;
+  });
+
+  patient.treatments = updatedTreatments;
+  const patientIndex = patients.findIndex(
+    (patient) => patient.id === patientId
+  );
+  patients[patientIndex] = patient;
+  saveToStorage("patientDB", patients);
+  return patients;
 }
 export function getPatientsTreatments() {
   const patientsTreatments = loadFromStorage("patientsTreatmentsDB");

@@ -24,36 +24,33 @@ const MenuProps = {
   },
 };
 
-export function TableTreatmentsOptions({ patientTreatments, editPatientId }) {
+//PatientTreatmentsInput
+
+export function PatientTreatmentsInput({
+  patientTreatments,
+  treatments,
+  editedTreatments,
+  setEditedTreatments,
+}) {
   const theme = useTheme();
-  const [currentTreatments, setCurrentTreatments] = useState([]);
-  const [treatments, setTreatments] = useState();
-
-  useEffect(() => {
-    const treatments = getTreatments();
-    setTreatments(treatments);
-  }, []);
-
-  useEffect(() => {
-    if (treatments) {
-      const currentTreatments = patientTreatments.map((patientTreatment) => {
-        return treatments.find(
-          (treatment) => patientTreatment.treatmentId === treatment.id
-        );
-      });
-      setCurrentTreatments(currentTreatments);
-    }
-  }, [patientTreatments, treatments]);
 
   function handleChange(ev) {
     const { value } = ev.target;
-    console.log(value);
+    setEditedTreatments(value);
   }
 
   function getTreatmentsTypes(treatments) {
     const types = treatments.map((treatment) => treatment.type);
     return types.join(", ");
   }
+  const currentTreatments =
+    editedTreatments ??
+    patientTreatments.map((patientTreatment) => {
+      return {
+        id: patientTreatment.treatmentId,
+        type: patientTreatment.label,
+      };
+    });
 
   return (
     <FormControl sx={{ m: 1, width: 300 }}>
@@ -67,12 +64,12 @@ export function TableTreatmentsOptions({ patientTreatments, editPatientId }) {
         input={<OutlinedInput label="Treatments" />}
         renderValue={(selected) => getTreatmentsTypes(selected)}
         MenuProps={MenuProps}
-        disabled={editPatientId !== patientTreatments[0]?.patientId}
+        disabled={!editedTreatments}
       >
         {treatments?.map((treatment) => (
           <MenuItem key={treatment.treatmentId} value={treatment}>
             <Checkbox
-              checked={currentTreatments.find(
+              checked={currentTreatments?.some(
                 (currTreatment) => currTreatment.id === treatment.id
               )}
             />

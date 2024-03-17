@@ -1,5 +1,12 @@
 "use client";
-import { getPatientTreatments } from "@/app/services/service";
+import {
+  getPatient,
+  getPatientById,
+  getPatientTreatments,
+  getTreatments,
+  removePatient,
+  updatePatientTreatments,
+} from "@/app/services/service";
 import {
   Button,
   Paper,
@@ -11,17 +18,45 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useState } from "react";
-import { TableTreatmentsOptions } from "./table-treatments-options";
+import { useEffect, useState } from "react";
+import { PatientTreatmentsInput } from "./table-treatments-options";
 
-export function AdminTable({ patients, patientsTreatments }) {
-  const [editPatientId, setEditPatientId] = useState();
-  function findPatientTreatments(patientId) {
-    const patientTreatments = getPatientTreatments(patientId);
-    return patientTreatments;
+export function AdminTable({ patients, setPatients }) {
+  const [treatments, setTreatments] = useState();
+  const [editPatientState, setEditPatientState] = useState(null);
+
+  useEffect(() => {
+    const treatments = getTreatments();
+    setTreatments(treatments);
+  }, []);
+
+  function editPatient(patientId) {
+    setEditPatientState({
+      id: patientId,
+      treatments: getPatientById(patientId).treatments.map(
+        (patientTreatment) => {
+          return treatments.find(
+            (treatment) => patientTreatment.treatmentId === treatment.id
+          );
+        }
+      ),
+    });
   }
 
-  console.log(editPatientId);
+  function onSubmitEdit() {
+    const patients = updatePatientTreatments(
+      editPatientState.id,
+      editPatientState.treatments
+    );
+    setPatients(patients);
+    setEditPatientState(null);
+  }
+
+  function onRemovePatient(patientId) {
+    const updatedPatients = removePatient(patientId);
+    setPatients(updatedPatients);
+  }
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -48,9 +83,20 @@ export function AdminTable({ patients, patientsTreatments }) {
                 {patient.phone ?? patient.phoneNumber}
               </TableCell>
               <TableCell align="center">
-                <TableTreatmentsOptions
-                  patientTreatments={findPatientTreatments(patient.id)}
-                  editPatientId={editPatientId}
+                <PatientTreatmentsInput
+                  patientTreatments={patient.treatments}
+                  treatments={treatments}
+                  editedTreatments={
+                    editPatientState?.id === patient.id
+                      ? editPatientState?.treatments
+                      : undefined
+                  }
+                  setEditedTreatments={(treatments) =>
+                    setEditPatientState({
+                      id: patient.id,
+                      treatments,
+                    })
+                  }
                 />
               </TableCell>
               <TableCell align="left">
@@ -59,19 +105,24 @@ export function AdminTable({ patients, patientsTreatments }) {
                   direction="row"
                   sx={{ justifyContent: "center" }}
                 >
-                  {editPatientId === patient.id && (
-                    <Button onClick={() => setEditPatientId(null)}>
+                  {editPatientState?.id === patient.id && (
+                    <Button onClick={() => setEditPatientState(null)}>
                       Cancel
                     </Button>
                   )}
-                  {editPatientId === patient.id ? (
-                    <Button onClick={() => console.log("hi")}>Save</Button>
+                  {editPatientState?.id === patient.id ? (
+                    <Button onClick={() => onSubmitEdit()}>Save</Button>
                   ) : (
-                    <Button onClick={() => setEditPatientId(patient.id)}>
+                    <Button onClick={() => editPatient(patient.id)}>
                       Edit
                     </Button>
                   )}
-                  <Button variant="contained">Delete patient</Button>
+                  <Button
+                    onClick={() => onRemovePatient(patient.id)}
+                    variant="contained"
+                  >
+                    Delete patient
+                  </Button>
                 </Stack>
               </TableCell>
             </TableRow>
