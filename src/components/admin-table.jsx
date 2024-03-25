@@ -8,6 +8,8 @@ import {
   updatePatientTreatments,
 } from "@/app/services/service";
 import {
+  Avatar,
+  Box,
   Button,
   Paper,
   Stack,
@@ -16,19 +18,33 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
+  TextField,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { PatientTreatmentsInput } from "./table-treatments-options";
 
-export function AdminTable({ patients, setPatients }) {
+export function AdminTable({ patients, setPatients, handleSearchChange }) {
   const [treatments, setTreatments] = useState();
   const [editPatientState, setEditPatientState] = useState(null);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
     const treatments = getTreatments();
     setTreatments(treatments);
   }, []);
+
+  function handleChangePage(event, newPage) {
+    setPage(newPage);
+  }
+
+  function handleChangeRowsPerPage(event) {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  }
 
   function editPatient(patientId) {
     setEditPatientState({
@@ -59,14 +75,40 @@ export function AdminTable({ patients, setPatients }) {
 
   return (
     <TableContainer component={Paper}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          background: "#e3e3e3bd",
+          padding: "5px 10px",
+        }}
+      >
+        <Typography sx={{ fontWeight: "bold" }}>Patients management</Typography>
+        <TextField
+          id="standard-search"
+          label="Search by name or email"
+          type="search"
+          variant="standard"
+          onChange={handleSearchChange}
+        />
+      </Box>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell align="center">Email</TableCell>
-            <TableCell align="center">Phone number</TableCell>
-            <TableCell align="center">Treatments</TableCell>
-            <TableCell align="center">Actions</TableCell>
+          <TableRow sx={{ textTransform: "uppercase" }}>
+            <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Email
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Phone number
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Treatments
+            </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }} align="center">
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -129,6 +171,15 @@ export function AdminTable({ patients, setPatients }) {
           ))}
         </TableBody>
       </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={patients?.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </TableContainer>
   );
 }

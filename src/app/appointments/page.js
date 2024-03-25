@@ -40,7 +40,7 @@ export default function Appointments() {
       });
     }
   }, [appointments, patient]);
-  console.log(appointments);
+
   const filteredTreatments = useMemo(() => {
     return patientTreatments?.map((treatment) => {
       const treatmentAppointments = appointments.filter(
@@ -168,7 +168,7 @@ export default function Appointments() {
   function deleteAppointment() {
     const answer = confirm("Sure you want to cancel the appointment?");
     if (!answer) return;
-    const filteredAppointments = removeAppointment(appointmentToEdit.id);
+    const filteredAppointments = removeAppointment(appointmentToEdit);
     setAppointments(filteredAppointments);
     handleClose();
   }
@@ -176,10 +176,10 @@ export default function Appointments() {
   function checkIfOverlap(endDate) {
     const appointmentOverlap = appointments.find(
       (appointment) =>
-        new Date(appointment.end) === endDate ||
-        new Date(appointment.start) === endDate ||
-        (new Date(appointment.start) < endDate &&
-          new Date(appointment.end) > endDate)
+        new Date(appointment.end).getTime() === endDate.getTime() ||
+        new Date(appointment.start).getTime() === endDate.getTime() ||
+        (new Date(appointment.start).getTime() < endDate.getTime() &&
+          new Date(appointment.end).getTime() > endDate.getTime())
     );
 
     return appointmentOverlap;

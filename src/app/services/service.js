@@ -235,8 +235,19 @@ function setAppointments() {
   }
 }
 
-export function getPatients() {
+export function getPatients(searchInput) {
   let patients = loadFromStorage("patientDB");
+  if (searchInput) {
+    const searchTerm = searchInput.toLowerCase();
+    return patients.filter((patient) => {
+      const fullNameMatch = patient.fullName.toLowerCase().includes(searchTerm);
+      const emailMatch = patient.email.toLowerCase().includes(searchTerm);
+      if (fullNameMatch || emailMatch) {
+        delete patient.password;
+        return patient;
+      }
+    });
+  }
   return patients.map((patient) => {
     delete patient.password;
     return patient;
@@ -303,11 +314,8 @@ export function getTreatments() {
   ];
 }
 export function getPatientTreatments(patientId) {
-  const patientsTreatments = loadFromStorage("patientsTreatmentsDB");
-  const patientTreatments = patientsTreatments.filter(
-    (treatment) => treatment.patientId === patientId
-  );
-  return patientTreatments;
+  const patient = getPatientById(patientId);
+  return patient.treatments;
 }
 
 export function removePatient(patientId) {
@@ -321,10 +329,18 @@ export function removePatient(patientId) {
 
 export function getPatientById(patientId) {
   const patients = loadFromStorage("patientDB");
-  const patient = patients.find((patient) => patient.id === patientId);
+  let patient = patients.find((patient) => patient.id === patientId);
+  delete patient.password;
   return patient;
 }
-
+function updatePatient(updatedPatient) {
+  let patients = loadFromStorage("patientDB");
+  const patientIndex = patients.findIndex(
+    (patient) => patient.id === updatedPatient.id
+  );
+  patients[patientIndex] = updatedPatient;
+  saveToStorage("patientDB", patients);
+}
 export function updatePatientTreatments(patientId, treatments) {
   let patients = loadFromStorage("patientDB");
   let patient = getPatientById(patientId);
@@ -366,26 +382,36 @@ export function addPatient(credentials) {
   if (emailExist) return "User with this email already exists";
   const avatar = makeAnAvatar(credentials.fullName);
   const id = makeId();
-  const patient = { ...credentials, avatar, id };
-  patients.push(patient);
-  const { email, fullName, phone } = patient;
-  const patientToSave = { email, fullName, id, phone, avatar };
-  sessionStorage.setItem("patient", JSON.stringify(patientToSave));
-  patientsTreatments.push({
+  const treatment = {
     treatmentId: "t7",
     patientId: id,
     assignedBy: "admin1",
     label: "פגישת ייעוץ",
     duration: 15,
     price: 0,
-  });
+  };
+  const patient = { ...credentials, avatar, id, treatments: [treatment] };
+  patients.push(patient);
+  const { email, fullName, phone, treatments } = patient;
+
+  const patientToSave = {
+    email,
+    fullName,
+    id,
+    phoneNumber: phone,
+    avatar,
+    treatments,
+  };
+  sessionStorage.setItem("patient", JSON.stringify(patientToSave));
+  patientsTreatments.push(treatment);
   saveToStorage("patientDB", patients);
   saveToStorage("patientsTreatmentsDB", patientsTreatments);
-  return patientToSave;
+  return { email, fullName, id, phoneNumber: phone, avatar };
 }
 
 export function addAppointment(appointmentDetails, patientId) {
   let appointments = loadFromStorage("appointmentsDB");
+  let patient = getPatientById(patientId);
   const id = makeId();
   const newAppointment = {
     ...appointmentDetails,
@@ -393,26 +419,42 @@ export function addAppointment(appointmentDetails, patientId) {
     patientId,
   };
   appointments.push(newAppointment);
+  if (patient.appointments) {
+    console.log("supposed to be here");
+    patient.appointments.push(newAppointment);
+  } else patient["appointments"] = [newAppointment];
+  updatePatient(patient);
   saveToStorage("appointmentsDB", appointments);
   return appointments;
 }
 
-export function removeAppointment(appointmentId) {
+export function removeAppointment(appointmentToRemove) {
   let appointments = loadFromStorage("appointmentsDB");
+  let patient = getPatientById(appointmentToRemove.patientId);
   const filteredAppointments = appointments.filter(
-    (appointment) => appointment.id !== appointmentId
+    (appointment) => appointment.id !== appointmentToRemove.id
   );
+  patient.appointments.filter(
+    (appointment) => appointment.id !== appointmentToRemove.id
+  );
+  updatePatient(patient);
   saveToStorage("appointmentsDB", filteredAppointments);
   return filteredAppointments;
 }
 
 export function updateAppointment(updatedAppointment) {
   let appointments = loadFromStorage("appointmentsDB");
+  let patient = getPatientById(updatedAppointment.patientId);
   const filteredAppointments = appointments.filter(
     (appointment) => appointment.id !== updatedAppointment.id
   );
+  patient.appointments.filter(
+    (appointment) => appointment.id !== updatedAppointment.id
+  );
   filteredAppointments.push(updatedAppointment);
+  patient.appointments.push(updatedAppointment);
   saveToStorage("appointmentsDB", filteredAppointments);
+  updatePatient(patient);
   return filteredAppointments;
 }
 

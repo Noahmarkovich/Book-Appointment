@@ -56,6 +56,7 @@ export function AppointmentModal({
       });
       return;
     }
+
     const isOverlap = checkIfOverlap(endDate);
     if (isOverlap) {
       setError("Appointments can not overlap");
