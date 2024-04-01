@@ -7,16 +7,23 @@ import { ThemeProvider } from "@emotion/react";
 import { buttonTheme } from "@/styles/theme/muiTheme";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "@/context/authContext";
+import { getCookie } from "@/app/services/service";
 
-const headerTitles = [
+const patientHeaderTitles = [
   { title: "About us", ref: "/" },
-  { title: "Our treatments", ref: "/" },
+  { title: "Our treatments", ref: "/ourTreatments" },
   { title: "Schedule appointment", ref: "/appointments" },
 ];
+const adminHeaderTitles = [
+  { title: "Manage patients", ref: "/admin" },
+  { title: "Manage Content", ref: "/contentManage" },
+  { title: "Manage appointment", ref: "/admin/appointments" },
+];
+
 export function AppHeader() {
   const router = useRouter();
   const theme = useContext(AuthContext);
-  const { patient, setPatient } = theme;
+  const { patient, setPatient, admin, setAdmin } = theme;
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -26,23 +33,40 @@ export function AppHeader() {
     setAnchorEl(null);
   };
   const navLinksToShow = useMemo(() => {
-    if (!patient) {
-      return headerTitles.filter((nav) => nav.title !== "Schedule appointment");
-    } else return headerTitles;
-  }, [patient]);
+    if (!patient && !admin) {
+      return patientHeaderTitles.filter(
+        (nav) => nav.title !== "Schedule appointment"
+      );
+    }
+    if (admin) {
+      return adminHeaderTitles;
+    } else return patientHeaderTitles;
+  }, [patient, admin]);
 
   useEffect(() => {
-    const currentPatient = sessionStorage.getItem("patient");
+    const currentAdmin = getCookie("admin");
+    const currentPatient = getCookie("patient");
+
+    if (currentAdmin) {
+      setAdmin(JSON.parse(currentAdmin));
+    }
     if (currentPatient) {
       setPatient(JSON.parse(currentPatient));
     }
-  }, [setPatient]);
+  }, [setPatient, setAdmin]);
 
   function onLogout() {
-    sessionStorage.clear();
-    setPatient(null);
-    handleClose();
+    if (admin) {
+      document.cookie = `admin="";max-age=0`;
+      setAdmin(null);
+    }
+    if (patient) {
+      document.cookie = `patient="";max-age=0`;
+      setPatient(null);
+    }
     router.push("/");
+    sessionStorage.clear();
+    handleClose();
   }
 
   return (
@@ -62,17 +86,20 @@ export function AppHeader() {
       </div>
       <div>
         <ThemeProvider theme={buttonTheme}>
-          {patient ? (
+          {patient || admin ? (
             <div>
               <Avatar
-                sx={{ bgcolor: patient.avatar.color, cursor: "pointer" }}
+                sx={{
+                  bgcolor: patient ? patient.avatar.color : admin.avatar.color,
+                  cursor: "pointer",
+                }}
                 aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
                 id="basic-menu"
               >
-                {patient.avatar.initials}
+                {patient ? patient.avatar.initials : admin.avatar.initials}
               </Avatar>
 
               <Menu

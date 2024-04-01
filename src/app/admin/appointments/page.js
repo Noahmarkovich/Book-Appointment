@@ -1,28 +1,27 @@
 "use client";
-
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
-import timeGrid from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import { useContext, useEffect, useMemo, useState } from "react";
 import {
   addAppointment,
   getAppointments,
+  getPatientById,
   getPatientTreatments,
   getPatients,
   getTreatments,
-  removeAppointment,
   updateAppointment,
-} from "../services/service";
+} from "@/app/services/service";
 import { AppointmentModal } from "@/components/appointment-modal";
 import { AuthContext } from "@/context/authContext";
+import FullCalendar from "@fullcalendar/react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGrid from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
 
 export default function Appointments() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [error, setError] = useState();
   const theme = useContext(AuthContext);
-  const { patient, setPatient } = theme;
+  const { admin, setAdmin } = theme;
   const [appointments, setAppointments] = useState(null);
   const [patientTreatments, setPatientTreatments] = useState(null);
   const [appointmentToEdit, setAppointmentToEdit] = useState({
@@ -31,23 +30,24 @@ export default function Appointments() {
     end: "",
   });
 
-  useMemo(() => {
-    if (patient) {
-      appointments?.map((appointment) => {
-        if (appointment.patientId === patient.id) {
-          let newAppointment = appointment;
-          newAppointment["backgroundColor"] = "rgb(253 226 244)";
-          return newAppointment;
-        } else return appointment;
-      });
-    }
-  }, [appointments, patient]);
+  const [patients, setPatients] = useState();
+  const [currentPatient, setCurrentPatient] = useState({});
+
+  useEffect(() => {
+    const patients = getPatients().map((patient) => {
+      let newPatient = { ...patient };
+      newPatient["label"] = patient.email;
+      return newPatient;
+    });
+
+    setPatients(patients);
+  }, []);
 
   const filteredTreatments = useMemo(() => {
     return patientTreatments?.map((treatment) => {
       const treatmentAppointments = appointments.filter(
         (appointment) =>
-          appointment.patientId === patient?.id &&
+          appointment.patientId === currentPatient?.id &&
           appointment.title === treatment.label
       );
       if (!treatmentAppointments || treatmentAppointments.length === 0)
@@ -62,21 +62,24 @@ export default function Appointments() {
         return newTreatment;
       } else return treatment;
     });
-  }, [appointments, patientTreatments, patient]);
+  }, [appointments, patientTreatments, currentPatient]);
 
   useEffect(() => {
-    if (patient) {
-      const patientTreatments = getPatientTreatments(patient.id);
-      setPatientTreatments(patientTreatments);
-    }
-  }, [patient]);
+    if (admin.isAdmin) {
+      let appointments = getAppointments();
 
-  useEffect(() => {
-    if (patient) {
-      const appointments = getAppointments(patient.id);
       setAppointments(appointments);
     }
-  }, [patient]);
+  }, [admin]);
+
+  useMemo(() => {
+    appointments?.map(
+      (appointment) =>
+        (appointment["patientName"] = getPatientById(
+          appointment.patientId
+        ).fullName)
+    );
+  }, [appointments]);
 
   function handleSelect(info) {
     const isValidTime = isWithinBusinessHours(info.date);
@@ -132,6 +135,7 @@ export default function Appointments() {
       start: "",
       end: "",
     });
+    setCurrentPatient(null);
     setError(null);
   }
 
@@ -145,7 +149,10 @@ export default function Appointments() {
       return;
     }
 
-    const newAppointments = addAppointment(appointmentToEdit, patient.id);
+    const newAppointments = addAppointment(
+      appointmentToEdit,
+      currentPatient.id
+    );
     setAppointments(newAppointments);
     handleClose();
   }
@@ -162,7 +169,11 @@ export default function Appointments() {
     const currentAppointment = appointments.find(
       (appointment) => appointment.id === id
     );
-    if (currentAppointment.patientId !== patient.id) return;
+    const currentPatientTreatments = getPatientTreatments(
+      currentAppointment.patientId
+    );
+    setPatientTreatments(currentPatientTreatments);
+
     setAppointmentToEdit(currentAppointment);
     handleOpen();
   }
@@ -188,13 +199,15 @@ export default function Appointments() {
   }
 
   if (!appointments) return <div>loading</div>;
-  if (!patient) return <div>page not found</div>;
+  if (!admin) return <div>page not found</div>;
+
   return (
     <main className="appointments">
       <AppointmentModal
         open={open}
         handleClose={handleClose}
         patientTreatments={filteredTreatments}
+        setPatientTreatments={setPatientTreatments}
         appointmentToEdit={appointmentToEdit}
         setAppointmentToEdit={setAppointmentToEdit}
         onSubmitAppointment={
@@ -204,7 +217,10 @@ export default function Appointments() {
         error={error}
         setError={setError}
         checkIfOverlap={checkIfOverlap}
-        user={patient ? "patient" : "admin"}
+        patients={patients}
+        currentPatient={currentPatient}
+        setCurrentPatient={setCurrentPatient}
+        user={admin ? "admin" : "patient"}
       />
       <FullCalendar
         plugins={[dayGridPlugin, timeGrid, interactionPlugin]}
@@ -238,6 +254,17 @@ export default function Appointments() {
         eventTextColor={"black"}
         eventBackgroundColor="rgb(232 249 255)"
         eventBorderColor="#8080804a"
+        eventContent={function (arg) {
+          let italicEl = document.createElement("a");
+          let italicEl2 = document.createElement("a");
+          italicEl.innerHTML = arg.event.extendedProps.patientName;
+          italicEl.style.display = " block";
+          italicEl.style.marginBottom = " 5px";
+          italicEl2.innerHTML = arg.event.title;
+
+          let arrayOfDomNodes = [italicEl, italicEl2];
+          return { domNodes: arrayOfDomNodes };
+        }}
       />
     </main>
   );

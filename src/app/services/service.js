@@ -248,6 +248,7 @@ export function getPatients(searchInput) {
       }
     });
   }
+  console.log(patients, "from service");
   return patients.map((patient) => {
     delete patient.password;
     return patient;
@@ -256,15 +257,17 @@ export function getPatients(searchInput) {
 
 export function getAppointments(patientId) {
   let appointments = loadFromStorage("appointmentsDB");
-  return appointments.map((appointment) => {
-    if (appointment.patientId === patientId) {
-      return appointment;
-    } else {
-      let alteredAppointment = { ...appointment };
-      alteredAppointment.title = "";
-      return alteredAppointment;
-    }
-  });
+  if (patientId) {
+    return appointments.map((appointment) => {
+      if (appointment.patientId === patientId) {
+        return appointment;
+      } else {
+        let alteredAppointment = { ...appointment };
+        alteredAppointment.title = "";
+        return alteredAppointment;
+      }
+    });
+  } else return appointments;
 }
 
 export function getTreatments() {
@@ -314,7 +317,7 @@ export function getTreatments() {
   ];
 }
 export function getPatientTreatments(patientId) {
-  const patient = getPatientById(patientId);
+  const patient = getPatientByIdLocal(patientId);
   return patient.treatments;
 }
 
@@ -333,6 +336,12 @@ export function getPatientById(patientId) {
   delete patient.password;
   return patient;
 }
+
+function getPatientByIdLocal(patientId) {
+  const patients = loadFromStorage("patientDB");
+  let patient = patients.find((patient) => patient.id === patientId);
+  return patient;
+}
 function updatePatient(updatedPatient) {
   let patients = loadFromStorage("patientDB");
   const patientIndex = patients.findIndex(
@@ -343,7 +352,7 @@ function updatePatient(updatedPatient) {
 }
 export function updatePatientTreatments(patientId, treatments) {
   let patients = loadFromStorage("patientDB");
-  let patient = getPatientById(patientId);
+  // let patient = getPatientById(patientId);
 
   const updatedTreatments = treatments.map((treatment) => {
     if (!treatment.assignedBy) {
@@ -359,11 +368,10 @@ export function updatePatientTreatments(patientId, treatments) {
     } else return treatment;
   });
 
-  patient.treatments = updatedTreatments;
   const patientIndex = patients.findIndex(
     (patient) => patient.id === patientId
   );
-  patients[patientIndex] = patient;
+  patients[patientIndex].treatments = updatedTreatments;
   saveToStorage("patientDB", patients);
   return patients;
 }
@@ -411,7 +419,7 @@ export function addPatient(credentials) {
 
 export function addAppointment(appointmentDetails, patientId) {
   let appointments = loadFromStorage("appointmentsDB");
-  let patient = getPatientById(patientId);
+  let patient = getPatientByIdLocal(patientId);
   const id = makeId();
   const newAppointment = {
     ...appointmentDetails,
@@ -420,9 +428,9 @@ export function addAppointment(appointmentDetails, patientId) {
   };
   appointments.push(newAppointment);
   if (patient.appointments) {
-    console.log("supposed to be here");
     patient.appointments.push(newAppointment);
   } else patient["appointments"] = [newAppointment];
+
   updatePatient(patient);
   saveToStorage("appointmentsDB", appointments);
   return appointments;
@@ -430,13 +438,14 @@ export function addAppointment(appointmentDetails, patientId) {
 
 export function removeAppointment(appointmentToRemove) {
   let appointments = loadFromStorage("appointmentsDB");
-  let patient = getPatientById(appointmentToRemove.patientId);
+  let patient = getPatientByIdLocal(appointmentToRemove.patientId);
   const filteredAppointments = appointments.filter(
     (appointment) => appointment.id !== appointmentToRemove.id
   );
-  patient.appointments.filter(
+  let filteredPatientAppointments = patient.appointments.filter(
     (appointment) => appointment.id !== appointmentToRemove.id
   );
+  patient.appointments = filteredPatientAppointments;
   updatePatient(patient);
   saveToStorage("appointmentsDB", filteredAppointments);
   return filteredAppointments;
@@ -444,15 +453,16 @@ export function removeAppointment(appointmentToRemove) {
 
 export function updateAppointment(updatedAppointment) {
   let appointments = loadFromStorage("appointmentsDB");
-  let patient = getPatientById(updatedAppointment.patientId);
+  let patient = getPatientByIdLocal(updatedAppointment.patientId);
   const filteredAppointments = appointments.filter(
     (appointment) => appointment.id !== updatedAppointment.id
   );
-  patient.appointments.filter(
+  let filteredPatientAppointments = patient.appointments.filter(
     (appointment) => appointment.id !== updatedAppointment.id
   );
   filteredAppointments.push(updatedAppointment);
-  patient.appointments.push(updatedAppointment);
+  filteredPatientAppointments.push(updatedAppointment);
+  patient.appointments = filteredPatientAppointments;
   saveToStorage("appointmentsDB", filteredAppointments);
   updatePatient(patient);
   return filteredAppointments;
@@ -467,7 +477,8 @@ export function getPatient(credentials) {
   if (patient.password === credentials.password) {
     const { email, fullName, id, phone, avatar } = patient;
     const patientToSave = { email, fullName, id, phone, avatar };
-    sessionStorage.setItem("patient", JSON.stringify(patientToSave));
+    // sessionStorage.setItem("patient", JSON.stringify(patientToSave));
+    document.cookie = `patient=${JSON.stringify(patientToSave)};max-age=604800`;
     return patientToSave;
   } else return "Wrong email or password";
 }
@@ -514,4 +525,20 @@ function loadFromStorage(key) {
   const data = localStorage.getItem(key);
 
   return data ? JSON.parse(data) : undefined;
+}
+
+export function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }

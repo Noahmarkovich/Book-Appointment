@@ -50,8 +50,10 @@ import { Button, Stack, Typography } from "@mui/material";
 import styles from "./page.module.css";
 import { ThemeProvider } from "@emotion/react";
 import { buttonTheme, typographyTheme } from "@/styles/theme/muiTheme";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   return (
     <main className={styles.main}>
       <section className="home-page">
@@ -78,6 +80,7 @@ export default function Home() {
                   variant="text"
                   color="black"
                   sx={{ textTransform: "none" }}
+                  onClick={() => router.push("/ourTreatments")}
                 >
                   Our treatments
                 </Button>

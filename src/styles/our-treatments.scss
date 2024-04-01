@@ -1,0 +1,13 @@
+.our-treatments {
+  padding: 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  align-items: center;
+
+  .treatments {
+    display: flex;
+    gap: 50px;
+    text-align: right;
+  }
+}

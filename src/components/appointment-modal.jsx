@@ -10,6 +10,7 @@ import Modal from "@mui/material/Modal";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import { useState } from "react";
 
 const style = {
   position: "absolute",
@@ -27,6 +28,7 @@ export function AppointmentModal({
   open,
   handleClose,
   patientTreatments,
+  setPatientTreatments,
   appointmentToEdit,
   setAppointmentToEdit,
   onSubmitAppointment,
@@ -34,6 +36,10 @@ export function AppointmentModal({
   error,
   setError,
   checkIfOverlap,
+  patients,
+  currentPatient,
+  setCurrentPatient,
+  user,
 }) {
   function handleChange(input) {
     const startDate = new Date(input.$d);
@@ -150,6 +156,12 @@ export function AppointmentModal({
     });
   }
 
+  function handleSelectPatientChange(ev, value) {
+    let currentPatient = value;
+    setCurrentPatient(currentPatient);
+    setPatientTreatments(value.treatments);
+  }
+
   return (
     <Modal
       open={open}
@@ -158,11 +170,38 @@ export function AppointmentModal({
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          component="h2"
+          sx={{ mb: "20px" }}
+        >
           {appointmentToEdit.id
-            ? "Update your appointment"
+            ? `Update ${
+                user === "admin" ? appointmentToEdit.patientName + "'s" : ""
+              } appointment`
             : "Book an appointment"}
         </Typography>
+        <Typography id="modal-modal-title" variant="caption" sx={{}}>
+          Reminder: appointments cannot be booked within three months of the
+          previous visit.
+        </Typography>
+        {user === "admin" && !appointmentToEdit.id && (
+          <Autocomplete
+            disablePortal
+            options={patients}
+            value={currentPatient && currentPatient.email}
+            isOptionEqualToValue={(option, value) =>
+              option === value || option.label === currentPatient.email
+            }
+            // getOptionDisabled={(option) => option.isDisable}
+            onChange={handleSelectPatientChange}
+            sx={{ width: "100%", marginTop: "20px" }}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Select patient's email" />
+            )}
+          />
+        )}
         <Autocomplete
           disablePortal
           id="combo-box-demo"

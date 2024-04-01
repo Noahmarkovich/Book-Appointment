@@ -67,7 +67,7 @@ export function PatientTreatmentsInput({
         disabled={!editedTreatments}
       >
         {treatments?.map((treatment) => (
-          <MenuItem key={treatment.treatmentId} value={treatment}>
+          <MenuItem key={treatment.id} value={treatment}>
             <Checkbox
               checked={currentTreatments?.some(
                 (currTreatment) => currTreatment.id === treatment.id
