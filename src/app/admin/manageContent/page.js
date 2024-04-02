@@ -37,9 +37,12 @@ export default function ManageContent() {
       </div>
       {showedData && (
         <div>
-          {Object.entries(showedData?.content).map((key) => (
-            <div key={key[0]}>{key[1].title}</div>
-          ))}
+          {/* <form>
+            {Object.entries(showedData?.content).map((key) => (
+              <div key={key[0]}>{key[1].title}</div>
+            ))}
+
+          </form> */}
         </div>
       )}
     </section>
