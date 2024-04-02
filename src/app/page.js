@@ -1,67 +1,31 @@
 "use client";
-import Diversity1Icon from "@mui/icons-material/Diversity1";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
-import CleanHandsIcon from "@mui/icons-material/CleanHands";
-import AdsClickIcon from "@mui/icons-material/AdsClick";
-const aboutUs = {
-  title: "Welcome to our clinic - Laser Hair Removal Treatment Center!",
-  main: [
-    {
-      id: "p1",
-      p: "Our clinic is a small and intimate establishment specializing in laser hair removal treatments. We believe in a personal and warm approach to every client, and we are committed to providing you with the best service in a pleasant and personal atmosphere.",
-    },
-    {
-      id: "p2",
-      p: "We invite you to join us and enjoy our professional and personal service, for a worry-free experience with impressive results. ",
-    },
-  ],
-};
 
-const whyChooseUs = {
-  title: "Why choose us ?",
-  listContent: [
-    {
-      title: "Holistic approach by experts",
-      icon: <Diversity1Icon fontSize="large" sx={{ color: "#ffc65c" }} />,
-      content:
-        "Our clinic takes a holistic approach to laser hair removal, where our expert team considers individual needs and concerns, ensuring a comprehensive and personalized treatment experience.",
-    },
-    {
-      title: "Customized treatment plan",
-      icon: <EventAvailableIcon fontSize="large" sx={{ color: "#ffc65c" }} />,
-      content:
-        "Each client receives a customized treatment plan tailored to their unique hair type, skin tone, and desired outcome, guaranteeing optimal results and satisfaction.",
-    },
-    {
-      title: "Keeping clean and sterilized",
-      icon: <CleanHandsIcon fontSize="large" sx={{ color: "#ffc65c" }} />,
-      content:
-        "We prioritize cleanliness and sterilization in every aspect of our clinic, maintaining rigorous standards to ensure a safe and hygienic environment for all our clients.",
-    },
-    {
-      title: "Availability and easy access",
-      icon: <AdsClickIcon fontSize="large" sx={{ color: "#ffc65c" }} />,
-      content:
-        "With convenient online scheduling, we offer flexible appointment availability for our clients, ensuring easy access to our services at their preferred times.",
-    },
-  ],
-};
 import { Button, Stack, Typography } from "@mui/material";
 import styles from "./page.module.css";
 import { ThemeProvider } from "@emotion/react";
 import { buttonTheme, typographyTheme } from "@/styles/theme/muiTheme";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getData } from "./services/admin.service";
 
 export default function Home() {
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    const currentData = getData("home-page");
+    setData(currentData);
+  }, []);
   const router = useRouter();
+
+  if (!data) return <div>loading</div>;
   return (
     <main className={styles.main}>
       <section className="home-page">
         <div className="introduction">
           <div className="text-container">
             <ThemeProvider theme={typographyTheme}>
-              <Typography variant="h2">{aboutUs.title}</Typography>
-              {aboutUs.main.map((p) => (
+              <Typography variant="h2">{data.content.aboutUs.title}</Typography>
+              {data.content.aboutUs.main.map((p) => (
                 <Typography key={p.id} variant="paragraphLightColor">
                   {p.p}
                 </Typography>
@@ -93,17 +57,20 @@ export default function Home() {
         </div>
         <div className="why-choose-us">
           <Typography id="choose-us-title" variant="h2">
-            {whyChooseUs.title}
+            {data.content.whyChooseUs.title}
           </Typography>
           <div className="list-content">
-            {whyChooseUs.listContent.map((reason, index) => {
+            {data.content.whyChooseUs.listContent.map((reason, index) => {
               return (
                 <div key={index} className="content">
-                  <div className="icon">{reason.icon}</div>
+                  <div className="icon">
+                    <img src={`/images/${reason.icon}.png`} />
+                  </div>
                   <ThemeProvider theme={typographyTheme}>
                     <Typography variant="h5" mt={"5px"} mb={"15px"}>
                       {reason.title}
                     </Typography>
+
                     <Typography variant="paragraphLightColor">
                       {reason.content}
                     </Typography>

@@ -194,7 +194,6 @@ export function AppointmentModal({
             isOptionEqualToValue={(option, value) =>
               option === value || option.label === currentPatient.email
             }
-            // getOptionDisabled={(option) => option.isDisable}
             onChange={handleSelectPatientChange}
             sx={{ width: "100%", marginTop: "20px" }}
             renderInput={(params) => (

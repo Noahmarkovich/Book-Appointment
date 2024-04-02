@@ -15,7 +15,6 @@ export function middleware(request) {
   }
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/admin", "/admin/appointments"],
+  matcher: ["/admin", "/admin/appointments", "/admin/manageContent"],
 };

@@ -1,4 +1,5 @@
 setAdmins();
+setConstData();
 
 function setConstData() {
   let data = loadFromStorage("dataDB");
@@ -26,41 +27,97 @@ function setConstData() {
             listContent: [
               {
                 title: "Holistic approach by experts",
-                icon: (
-                  <Diversity1Icon fontSize="large" sx={{ color: "#ffc65c" }} />
-                ),
+                icon: "person-icon",
                 content:
                   "Our clinic takes a holistic approach to laser hair removal, where our expert team considers individual needs and concerns, ensuring a comprehensive and personalized treatment experience.",
               },
               {
                 title: "Customized treatment plan",
-                icon: (
-                  <EventAvailableIcon
-                    fontSize="large"
-                    sx={{ color: "#ffc65c" }}
-                  />
-                ),
+                icon: "calendar-icon",
                 content:
                   "Each client receives a customized treatment plan tailored to their unique hair type, skin tone, and desired outcome, guaranteeing optimal results and satisfaction.",
               },
               {
                 title: "Keeping clean and sterilized",
-                icon: (
-                  <CleanHandsIcon fontSize="large" sx={{ color: "#ffc65c" }} />
-                ),
+                icon: "clean-icon",
                 content:
                   "We prioritize cleanliness and sterilization in every aspect of our clinic, maintaining rigorous standards to ensure a safe and hygienic environment for all our clients.",
               },
               {
                 title: "Availability and easy access",
-                icon: (
-                  <AdsClickIcon fontSize="large" sx={{ color: "#ffc65c" }} />
-                ),
+                icon: "site-icon",
                 content:
                   "With convenient online scheduling, we offer flexible appointment availability for our clients, ensuring easy access to our services at their preferred times.",
               },
             ],
           },
+        },
+      },
+      {
+        id: "our-treatments",
+        content: {
+          treatments: {
+            title: "Our treatments",
+            paragraph:
+              "At our hair removal clinic, we prioritize gentle and effective care for our clients. Our state-of-the-art facility utilizes advanced laser technology, such as diode lasers or intense pulsed light (IPL), to target unwanted hair with precision and minimal discomfort. We understand the sensitivity of skin in these treatments, which is why our trained professionals ensure each session is tailored to individual needs, considering skin type and hair texture. Additionally, we offer a range of soothing products designed to enhance post-treatment comfort and promote skin recovery, ensuring a smooth and satisfying experience for every client.",
+            image: "treatment-areas",
+            treatments: [
+              {
+                id: "t1",
+                type: "בית שחי",
+                duration: 30,
+                price: 200,
+              },
+              {
+                id: "t2",
+                type: "רגליים",
+                duration: 60,
+                price: 400,
+              },
+              {
+                id: "t3",
+                type: "ידיים",
+                duration: 45,
+                price: 200,
+              },
+              {
+                id: "t4",
+                type: "שפם",
+                duration: 30,
+                price: 150,
+              },
+              {
+                id: "t5",
+                type: "מפשעות",
+                duration: 30,
+                price: 200,
+              },
+              {
+                id: "t6",
+                type: "בטן",
+                duration: 30,
+                price: 150,
+              },
+            ],
+          },
+        },
+      },
+      {
+        id: "appointments",
+        content: {
+          durationBetweenTreatments: 3,
+          businessHours: [
+            {
+              daysOfWeek: [0, 1, 2, 4],
+              startTime: "09:00",
+              endTime: "18:00",
+            },
+            {
+              daysOfWeek: [3],
+              startTime: "09:00",
+              endTime: "14:00",
+            },
+          ],
         },
       },
     ];
@@ -86,6 +143,13 @@ function setAdmins() {
     ];
     saveToStorage("adminDB", admins);
   }
+}
+export function getData(dataId) {
+  const data = loadFromStorage("dataDB");
+  if (dataId) {
+    const currentData = data.find((data) => data.id === dataId);
+    return currentData;
+  } else return data;
 }
 
 export function getAdmin(credentials) {

@@ -16,7 +16,7 @@ const patientHeaderTitles = [
 ];
 const adminHeaderTitles = [
   { title: "Manage patients", ref: "/admin" },
-  { title: "Manage Content", ref: "/contentManage" },
+  { title: "Manage Content", ref: "/admin/manageContent" },
   { title: "Manage appointment", ref: "/admin/appointments" },
 ];
 
