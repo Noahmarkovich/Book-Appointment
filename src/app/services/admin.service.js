@@ -291,6 +291,25 @@ export function getData(dataId) {
   } else return data;
 }
 
+export function updateData(dataId, editedDataDictionary) {
+  let data = loadFromStorage("dataDB");
+  let currentData = data.find((data) => data.id === dataId);
+  let currentDataIndex = data.findIndex((data) => data.id === dataId);
+  editedDataDictionary.map((editedData) => {
+    const keys = editedData.id.split(".");
+    let nestedObject = currentData.content;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      nestedObject = nestedObject[keys[i]];
+    }
+    nestedObject[keys[keys.length - 1]] = editedData.value;
+  });
+  data[currentDataIndex] = currentData;
+  // console.log(data);
+  saveToStorage("dataDB", data);
+  return data;
+}
+
 export function getAdmin(credentials) {
   const admins = loadFromStorage("adminDB");
   const admin = admins.find((admin) => admin.email === credentials.email);

@@ -1,17 +1,19 @@
 .edit-content {
   .edit-data-form {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-
-    .inputs {
+    .form-container {
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      justify-content: center;
+      gap: 40px;
 
-      .input {
+      .inputs {
         display: flex;
+        flex-direction: column;
         gap: 20px;
+
+        .input {
+          display: flex;
+          gap: 20px;
+        }
       }
     }
   }

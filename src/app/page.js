@@ -72,7 +72,7 @@ export default function Home() {
                     </Typography>
 
                     <Typography variant="paragraphLightColor">
-                      {reason.content}
+                      {reason.p}
                     </Typography>
                   </ThemeProvider>
                 </div>
