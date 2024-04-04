@@ -50,7 +50,7 @@ export default function ManageContent() {
     setEditedData(null);
   }
 
-  // console.log(data);
+  console.log(data);
   function handleSingleChange(ev) {
     const { name, value } = ev.target;
     const currentEditedDataIndex = editedData.findIndex(
