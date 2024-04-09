@@ -5,7 +5,6 @@ export function middleware(request) {
   let currentUser;
   if (currentCookie) {
     currentUser = JSON.parse(currentCookie.value);
-    console.log(currentUser);
   }
   if (!currentCookie) {
     return NextResponse.redirect(new URL("/admin/login", request.url));

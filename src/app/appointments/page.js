@@ -59,7 +59,7 @@ export default function Appointments() {
           new Date(treatmentAppointment.start) <
           new Date(
             new Date().setMonth(
-              new Date().getMonth() + data.content.durationBetweenTreatments
+              new Date().getMonth() + +data.content.durationBetweenTreatments
             )
           )
       );
@@ -180,7 +180,7 @@ export default function Appointments() {
 
     return appointmentOverlap;
   }
-
+  console.log(appointments);
   if (!appointments || !data) return <div>loading</div>;
   if (!patient) return <div>page not found</div>;
   return (
@@ -221,6 +221,11 @@ export default function Appointments() {
         eventTextColor={"black"}
         eventBackgroundColor="rgb(232 249 255)"
         eventBorderColor="#8080804a"
+        eventClassNames={function (arg) {
+          if (arg.event.title === "פגישת ייעוץ") {
+            return "small-cell";
+          }
+        }}
       />
     </main>
   );

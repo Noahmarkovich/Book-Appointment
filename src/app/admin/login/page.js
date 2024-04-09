@@ -22,7 +22,6 @@ export default function Login() {
       password: formData.get("password"),
     };
     const admin = getAdmin(credentials);
-    console.log(admin);
     if (typeof admin === "string") {
       setError(admin);
     } else {

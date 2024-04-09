@@ -248,7 +248,6 @@ export function getPatients(searchInput) {
       }
     });
   }
-  console.log(patients, "from service");
   return patients.map((patient) => {
     delete patient.password;
     return patient;

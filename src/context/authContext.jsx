@@ -17,7 +17,6 @@ export const AuthContextProvider = ({ children }) => {
     getCookie("admin") ? JSON.parse(getCookie("admin")) : ""
   );
 
-  console.log(patient, admin);
   return (
     <AuthContext.Provider value={{ patient, setPatient, admin, setAdmin }}>
       {children}

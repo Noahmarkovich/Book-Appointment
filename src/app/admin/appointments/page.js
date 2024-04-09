@@ -15,6 +15,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGrid from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { getData } from "@/app/services/admin.service";
 
 export default function Appointments() {
   const [open, setOpen] = useState(false);
@@ -29,9 +30,9 @@ export default function Appointments() {
     start: "",
     end: "",
   });
-
   const [patients, setPatients] = useState();
   const [currentPatient, setCurrentPatient] = useState({});
+  const [data, setData] = useState();
 
   useEffect(() => {
     const patients = getPatients().map((patient) => {
@@ -41,6 +42,11 @@ export default function Appointments() {
     });
 
     setPatients(patients);
+  }, []);
+
+  useEffect(() => {
+    const currentData = getData("appointments");
+    setData(currentData);
   }, []);
 
   const filteredTreatments = useMemo(() => {
@@ -55,14 +61,18 @@ export default function Appointments() {
       const isNeedDisable = treatmentAppointments?.find(
         (treatmentAppointment) =>
           new Date(treatmentAppointment.start) <
-          new Date(new Date().setMonth(new Date().getMonth() + 3))
+          new Date(
+            new Date().setMonth(
+              new Date().getMonth() + +data.content.durationBetweenTreatments
+            )
+          )
       );
       if (isNeedDisable) {
         const newTreatment = { ...treatment, ["isDisable"]: true };
         return newTreatment;
       } else return treatment;
     });
-  }, [appointments, patientTreatments, currentPatient]);
+  }, [appointments, patientTreatments, currentPatient, data]);
 
   useEffect(() => {
     if (admin.isAdmin) {
@@ -89,20 +99,7 @@ export default function Appointments() {
   }
 
   function isWithinBusinessHours(start) {
-    var businessHours = [
-      {
-        daysOfWeek: [0, 1, 2, 4],
-        startTime: "09:00",
-        endTime: "18:00",
-      },
-      {
-        daysOfWeek: [3],
-        startTime: "09:00",
-        endTime: "14:00",
-      },
-    ];
-
-    const businessTime = businessHours.find((business) =>
+    const businessTime = data.content.businessHours.find((business) =>
       business.daysOfWeek.includes(start.getDay())
     );
     if (!businessTime) {
@@ -198,7 +195,7 @@ export default function Appointments() {
     return appointmentOverlap;
   }
 
-  if (!appointments) return <div>loading</div>;
+  if (!appointments || !data) return <div>loading</div>;
   if (!admin) return <div>page not found</div>;
 
   return (
@@ -229,18 +226,7 @@ export default function Appointments() {
           left: "title,prev,next",
           right: "dayGridMonth,timeGridWeek,timeGridDay",
         }}
-        businessHours={[
-          {
-            daysOfWeek: [0, 1, 2, 4],
-            startTime: "09:00",
-            endTime: "18:00",
-          },
-          {
-            daysOfWeek: [3],
-            startTime: "09:00",
-            endTime: "14:00",
-          },
-        ]}
+        businessHours={data.content.businessHours}
         slotMinTime="9:00"
         slotMaxTime="18:00"
         allDaySlot={false}

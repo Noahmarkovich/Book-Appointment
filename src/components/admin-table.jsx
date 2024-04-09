@@ -84,7 +84,9 @@ export function AdminTable({ patients, setPatients, handleSearchChange }) {
           padding: "5px 10px",
         }}
       >
-        <Typography sx={{ fontWeight: "bold" }}>Patients management</Typography>
+        <Typography sx={{ fontWeight: "bold" }} color="#030357">
+          Patients management
+        </Typography>
         <TextField
           id="standard-search"
           label="Search by name or email"

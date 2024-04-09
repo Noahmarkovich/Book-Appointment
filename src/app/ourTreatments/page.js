@@ -23,7 +23,9 @@ export default function OurTreatments() {
         {data.content.treatments.treatments.map((treatment) => {
           return (
             <div key={treatment.id}>
-              <Typography variant="h6">{treatment.type}</Typography>
+              <Typography variant="h6">
+                {treatment.type ?? treatment.title}
+              </Typography>
               <Typography>{treatment.price} :מחיר</Typography>
               <Typography>{treatment.duration} :אורך טיפול</Typography>
             </div>

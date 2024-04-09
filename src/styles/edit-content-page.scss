@@ -1,18 +1,37 @@
 .edit-content {
-  .edit-data-form {
-    .form-container {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
+  display: flex;
+  justify-content: space-between;
+  background: rgb(211 211 211 / 18%);
+  min-height: 92vh;
 
-      .inputs {
+  .data-controllers {
+    background: white;
+    padding: 50px;
+  }
+
+  .edit-data-container {
+    margin: 0 auto;
+    padding: 50px 0;
+
+    .edit-data-form {
+      .form-container {
         display: flex;
-        flex-direction: column;
-        gap: 20px;
+        justify-content: center;
+        gap: 40px;
 
-        .input {
+        .inputs {
           display: flex;
+          flex-direction: column;
           gap: 20px;
+          background: white;
+          height: fit-content;
+          padding: 10px;
+          border-radius: 10px;
+
+          .input {
+            display: flex;
+            gap: 20px;
+          }
         }
       }
     }

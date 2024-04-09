@@ -139,5 +139,19 @@
         flex-shrink: 0;
       }
     }
+
+    &.small-cell {
+      .fc-event-main-frame {
+        padding: 0px;
+        // align-items: center;
+        // justify-content: space-evenly;
+        flex-direction: row;
+        font-size: 12px;
+
+        .fc-event-time {
+          margin-bottom: 0;
+        }
+      }
+    }
   }
 }

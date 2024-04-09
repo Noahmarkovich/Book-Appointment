@@ -305,7 +305,6 @@ export function updateData(dataId, editedDataDictionary) {
     nestedObject[keys[keys.length - 1]] = editedData.value;
   });
   data[currentDataIndex] = currentData;
-  // console.log(data);
   saveToStorage("dataDB", data);
   return data;
 }
