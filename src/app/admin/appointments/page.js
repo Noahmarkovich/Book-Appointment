@@ -244,12 +244,20 @@ export default function Appointments() {
           let italicEl = document.createElement("a");
           let italicEl2 = document.createElement("a");
           italicEl.innerHTML = arg.event.extendedProps.patientName;
-          italicEl.style.display = " block";
-          italicEl.style.marginBottom = " 5px";
           italicEl2.innerHTML = arg.event.title;
 
           let arrayOfDomNodes = [italicEl, italicEl2];
           return { domNodes: arrayOfDomNodes };
+        }}
+        eventClassNames={function (arg) {
+          if (
+            Math.floor(
+              (new Date(arg.event.end) - new Date(arg.event.start)) /
+                (1000 * 60)
+            ) < 20
+          ) {
+            return "small-cell";
+          }
         }}
       />
     </main>

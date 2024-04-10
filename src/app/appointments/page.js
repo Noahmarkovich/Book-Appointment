@@ -222,7 +222,12 @@ export default function Appointments() {
         eventBackgroundColor="rgb(232 249 255)"
         eventBorderColor="#8080804a"
         eventClassNames={function (arg) {
-          if (arg.event.title === "פגישת ייעוץ") {
+          if (
+            Math.floor(
+              (new Date(arg.event.end) - new Date(arg.event.start)) /
+                (1000 * 60)
+            ) < 20
+          ) {
             return "small-cell";
           }
         }}

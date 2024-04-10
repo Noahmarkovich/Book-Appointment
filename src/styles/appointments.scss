@@ -129,6 +129,7 @@
   }
   .fc-event {
     margin: 4px;
+
     .fc-event-main-frame {
       padding: 5px;
       align-items: center;
@@ -140,14 +141,25 @@
       }
     }
 
+    .fc-event-main {
+      flex-direction: column;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+    }
+
     &.small-cell {
-      .fc-event-main-frame {
+      .fc-event-main {
         padding: 0px;
-        // align-items: center;
-        // justify-content: space-evenly;
         flex-direction: row;
         font-size: 12px;
-
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        .fc-event-main-frame {
+          flex-direction: row;
+          gap: 5%;
+        }
         .fc-event-time {
           margin-bottom: 0;
         }

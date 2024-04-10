@@ -16,8 +16,10 @@
     .edit-data-form {
       .form-container {
         display: flex;
-        justify-content: center;
-        gap: 40px;
+        justify-content: space-between;
+        background: white;
+        border-radius: 4px;
+        box-shadow: 0 0 1px lightgray;
 
         .inputs {
           display: flex;

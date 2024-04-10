@@ -160,7 +160,6 @@ export default function ManageContent() {
     currentEditedData.value = [...currentEditedData.value, duplicationObject];
     let newShownData = [...editedData];
     newShownData[currentEditedDataIndex] = currentEditedData;
-    // console.log(newShownData);
     setEditedData(newShownData);
   }
 
