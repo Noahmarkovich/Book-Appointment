@@ -1,28 +1,28 @@
 "use client";
-
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
-import timeGrid from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import { useContext, useEffect, useMemo, useState } from "react";
 import {
   addAppointment,
   getAppointments,
+  getPatientById,
   getPatientTreatments,
-  removeAppointment,
+  getPatients,
+  getTreatments,
   updateAppointment,
-} from "../services/service";
+} from "@/app/services/service";
 import { AppointmentModal } from "@/components/appointment-modal";
 import { AuthContext } from "@/context/authContext";
-import { getData } from "../services/admin.service";
+import FullCalendar from "@fullcalendar/react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGrid from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import { getData } from "@/app/services/admin.service";
 
-export default function Appointments() {
-  const [data, setData] = useState();
+export function AppointmentsCmp({ fetchedAppointments }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [error, setError] = useState();
   const theme = useContext(AuthContext);
-  const { patient, setPatient } = theme;
+  const { admin, setAdmin } = theme;
   const [appointments, setAppointments] = useState(null);
   const [patientTreatments, setPatientTreatments] = useState(null);
   const [appointmentToEdit, setAppointmentToEdit] = useState({
@@ -30,24 +30,31 @@ export default function Appointments() {
     start: "",
     end: "",
   });
+  const [patients, setPatients] = useState();
+  const [currentPatient, setCurrentPatient] = useState({});
+  const [data, setData] = useState();
 
-  useMemo(() => {
-    if (patient) {
-      appointments?.map((appointment) => {
-        if (appointment.patientId === patient.id) {
-          let newAppointment = appointment;
-          newAppointment["backgroundColor"] = "rgb(253 226 244)";
-          return newAppointment;
-        } else return appointment;
-      });
-    }
-  }, [appointments, patient]);
+  console.log(fetchedAppointments);
+  useEffect(() => {
+    const patients = getPatients().map((patient) => {
+      let newPatient = { ...patient };
+      newPatient["label"] = patient.email;
+      return newPatient;
+    });
+
+    setPatients(patients);
+  }, []);
+
+  useEffect(() => {
+    const currentData = getData("appointments");
+    setData(currentData);
+  }, []);
 
   const filteredTreatments = useMemo(() => {
     return patientTreatments?.map((treatment) => {
-      const treatmentAppointments = appointments.filter(
+      const treatmentAppointments = fetchedAppointments.filter(
         (appointment) =>
-          appointment.patientId === patient?.id &&
+          appointment.patientId === currentPatient?.id &&
           appointment.title === treatment.label
       );
       if (!treatmentAppointments || treatmentAppointments.length === 0)
@@ -66,22 +73,24 @@ export default function Appointments() {
         return newTreatment;
       } else return treatment;
     });
-  }, [appointments, patientTreatments, patient, data]);
+  }, [fetchedAppointments, patientTreatments, currentPatient, data]);
 
   useEffect(() => {
-    if (patient) {
-      const patientTreatments = getPatientTreatments(patient.id);
-      setPatientTreatments(patientTreatments);
+    if (admin.isAdmin) {
+      let appointments = getAppointments();
 
-      const appointments = getAppointments(patient.id);
       setAppointments(appointments);
     }
-  }, [patient]);
+  }, [admin]);
 
-  useEffect(() => {
-    const currentData = getData("appointments");
-    setData(currentData);
-  }, []);
+  // useMemo(() => {
+  //   fetchedAppointments?.map(
+  //     (appointment) =>
+  //       (appointment["patientName"] = getPatientById(
+  //         appointment.patientId
+  //       ).fullName)
+  //   );
+  // }, [fetchedAppointments]);
 
   function handleSelect(info) {
     const isValidTime = isWithinBusinessHours(info.date);
@@ -124,6 +133,7 @@ export default function Appointments() {
       start: "",
       end: "",
     });
+    setCurrentPatient(null);
     setError(null);
   }
 
@@ -137,7 +147,10 @@ export default function Appointments() {
       return;
     }
 
-    const newAppointments = addAppointment(appointmentToEdit, patient.id);
+    const newAppointments = addAppointment(
+      appointmentToEdit,
+      currentPatient.id
+    );
     setAppointments(newAppointments);
     handleClose();
   }
@@ -151,10 +164,14 @@ export default function Appointments() {
   }
   function handleEventClick(clickedAppointment) {
     const { id } = clickedAppointment.event;
-    const currentAppointment = appointments.find(
+    const currentAppointment = fetchedAppointments.find(
       (appointment) => appointment.id === id
     );
-    if (currentAppointment.patientId !== patient.id) return;
+    const currentPatientTreatments = getPatientTreatments(
+      currentAppointment.patientId
+    );
+    setPatientTreatments(currentPatientTreatments);
+
     setAppointmentToEdit(currentAppointment);
     handleOpen();
   }
@@ -168,7 +185,7 @@ export default function Appointments() {
   }
 
   function checkIfOverlap(endDate) {
-    const appointmentOverlap = appointments.find(
+    const appointmentOverlap = fetchedAppointments.find(
       (appointment) =>
         new Date(appointment.end).getTime() === endDate.getTime() ||
         new Date(appointment.start).getTime() === endDate.getTime() ||
@@ -178,15 +195,17 @@ export default function Appointments() {
 
     return appointmentOverlap;
   }
-  console.log(appointments);
-  if (!appointments || !data) return <div>loading</div>;
-  if (!patient) return <div>page not found</div>;
+
+  if (!fetchedAppointments || !data) return <div>loading</div>;
+  if (!admin) return <div>page not found</div>;
+
   return (
     <main className="appointments">
       <AppointmentModal
         open={open}
         handleClose={handleClose}
         patientTreatments={filteredTreatments}
+        setPatientTreatments={setPatientTreatments}
         appointmentToEdit={appointmentToEdit}
         setAppointmentToEdit={setAppointmentToEdit}
         onSubmitAppointment={
@@ -196,7 +215,10 @@ export default function Appointments() {
         error={error}
         setError={setError}
         checkIfOverlap={checkIfOverlap}
-        user={patient ? "patient" : "admin"}
+        patients={patients}
+        currentPatient={currentPatient}
+        setCurrentPatient={setCurrentPatient}
+        user={admin ? "admin" : "patient"}
       />
       <FullCalendar
         plugins={[dayGridPlugin, timeGrid, interactionPlugin]}
@@ -214,11 +236,20 @@ export default function Appointments() {
         selectConstraint="businessHours"
         eventConstraint="businessHours"
         selectable={true}
-        events={appointments}
+        events={fetchedAppointments}
         eventClick={handleEventClick}
         eventTextColor={"black"}
         eventBackgroundColor="rgb(232 249 255)"
         eventBorderColor="#8080804a"
+        eventContent={function (arg) {
+          let italicEl = document.createElement("a");
+          let italicEl2 = document.createElement("a");
+          italicEl.innerHTML = arg.event.extendedProps.patientName;
+          italicEl2.innerHTML = arg.event.title;
+
+          let arrayOfDomNodes = [italicEl, italicEl2];
+          return { domNodes: arrayOfDomNodes };
+        }}
         eventClassNames={function (arg) {
           if (
             Math.floor(

@@ -49,13 +49,25 @@ export default function SignUp() {
     resolver: yupResolver(schema),
   });
 
-  function onSubmit(data) {
-    const currentPatient = addPatient(data);
-    if (typeof currentPatient === "string") {
-      setError(currentPatient);
-    } else {
-      setPatient(currentPatient);
-      router.push("/");
+  async function onSubmit(data) {
+    try {
+      const res = await fetch("/api/auth/signUp", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.status === 400) {
+        setError("User already exists");
+      } else {
+        setError(null);
+        const patient = await res.json();
+        setPatient(patient);
+        router.push("/");
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 

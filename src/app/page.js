@@ -7,6 +7,12 @@ import { buttonTheme, typographyTheme } from "@/styles/theme/muiTheme";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getData } from "./services/admin.service";
+import { SingleContent } from "@/components/single-content";
+
+const metadata = {
+  title: "Home page",
+  description: "Presents the clinic and the features of the site",
+};
 
 export default function Home() {
   const [data, setData] = useState();
@@ -17,15 +23,17 @@ export default function Home() {
   }, []);
   const router = useRouter();
 
-  if (!data) return <div>loading</div>;
+  // if (!data) return <div>loading</div>;
   return (
     <main className={styles.main}>
       <section className="home-page">
         <div className="introduction">
           <div className="text-container">
             <ThemeProvider theme={typographyTheme}>
-              <Typography variant="h2">{data.content.aboutUs.title}</Typography>
-              {data.content.aboutUs.main.map((p) => (
+              <Typography variant="h2">
+                {data?.content.aboutUs.title}
+              </Typography>
+              {data?.content.aboutUs.main.map((p) => (
                 <Typography key={p.id} variant="paragraphLightColor">
                   {p.p}
                 </Typography>
@@ -57,26 +65,11 @@ export default function Home() {
         </div>
         <div className="why-choose-us">
           <Typography id="choose-us-title" variant="h2">
-            {data.content.whyChooseUs.title}
+            {data?.content.whyChooseUs.title}
           </Typography>
           <div className="list-content">
-            {data.content.whyChooseUs.listContent.map((reason, index) => {
-              return (
-                <div key={index} className="content">
-                  <div className="icon">
-                    <img src={`/images/${reason.icon}.png`} />
-                  </div>
-                  <ThemeProvider theme={typographyTheme}>
-                    <Typography variant="h5" mt={"5px"} mb={"15px"}>
-                      {reason.title}
-                    </Typography>
-
-                    <Typography variant="paragraphLightColor">
-                      {reason.p}
-                    </Typography>
-                  </ThemeProvider>
-                </div>
-              );
+            {data?.content.whyChooseUs.listContent.map((reason, index) => {
+              return <SingleContent key={reason.id} reason={reason} />;
             })}
           </div>
         </div>

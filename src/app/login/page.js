@@ -13,20 +13,31 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const router = useRouter();
 
-  function submitHandle(ev) {
+  async function submitHandle(ev) {
     ev.preventDefault();
     const formData = new FormData(ev.currentTarget);
-    const credentials = {
-      email: formData.get("email"),
-      password: formData.get("password"),
-    };
-    const patient = getPatient(credentials);
-    if (typeof patient === "string") {
-      setError(patient);
-    } else {
-      setError(null);
-      setPatient(patient);
-      router.push("/");
+    // const credentials = {
+    const email = formData.get("email");
+    const password = formData.get("password");
+    // };
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.status === 401) {
+        setError("Wrong email or password");
+      } else {
+        setError(null);
+        const patient = await res.json();
+        setPatient(patient);
+        router.push("/");
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 

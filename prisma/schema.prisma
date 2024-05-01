@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Define models 
+
+model Patient {
+  id           String             @id @default(uuid())
+  fullName     String
+  phoneNumber  String
+  email        String             @unique
+  password     String
+  appointments Appointment[]
+  treatments   PatientTreatment[]
+  avatar       Json
+}
+
+model Appointment {
+  id          String    @id @default(uuid())
+  title       String
+  start       DateTime
+  end         DateTime
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  patientId   String
+  treatment   Treatment @relation(fields: [treatmentId], references: [id])
+  treatmentId String
+}
+
+model Treatment {
+  id                String             @id @default(uuid())
+  title             String
+  duration          Int
+  price             Int
+  appointments      Appointment[]
+  patientTreatments PatientTreatment[]
+}
+
+model PatientTreatment {
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  patientId   String
+  treatment   Treatment @relation(fields: [treatmentId], references: [id])
+  treatmentId String
+
+  @@id([patientId, treatmentId])
+}
+
+model User {
+  id       String @id @default(uuid())
+  fullName String
+  email    String @unique
+  password String
+  role     Role
+  avatar   Json
+}
+
+enum Role {
+  THERAPIST
+  ADMIN
+}

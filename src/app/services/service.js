@@ -503,7 +503,7 @@ function randomColor() {
   return "rgb(" + x + "," + y + "," + z + ")";
 }
 
-function makeAnAvatar(fullName) {
+export function makeAnAvatar(fullName) {
   const splitInitials = fullName.split(" ");
   let initials;
   if (splitInitials.length > 1) {
@@ -516,11 +516,13 @@ function makeAnAvatar(fullName) {
   return { initials, color };
 }
 
-function saveToStorage(key, value) {
+export function saveToStorage(key, value) {
+  return;
   localStorage.setItem(key, JSON.stringify(value));
 }
 
-function loadFromStorage(key) {
+export function loadFromStorage(key) {
+  return undefined;
   const data = localStorage.getItem(key);
 
   return data ? JSON.parse(data) : undefined;

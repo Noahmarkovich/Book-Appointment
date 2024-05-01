@@ -1,16 +1,16 @@
 "use client";
-import { getAdmin } from "@/app/services/admin.service";
-import { AuthContext } from "@/context/authContext";
+
 import { buttonTheme } from "@/styles/theme/muiTheme";
 import { ThemeProvider } from "@emotion/react";
 import { Box, Button, TextField, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { getPatient } from "../services/service";
 import { useContext, useState } from "react";
-
-export default function Login() {
-  const [error, setError] = useState(null);
+import { useRouter } from "next/navigation";
+import { AuthContext } from "@/context/authContext";
+export function LoginPage() {
   const theme = useContext(AuthContext);
   const { patient, setPatient } = theme;
+  const [error, setError] = useState(null);
   const router = useRouter();
 
   function submitHandle(ev) {
@@ -20,13 +20,13 @@ export default function Login() {
       email: formData.get("email"),
       password: formData.get("password"),
     };
-    const admin = getAdmin(credentials);
-    if (typeof admin === "string") {
-      setError(admin);
+    const patient = getPatient(credentials);
+    if (typeof patient === "string") {
+      setError(patient);
     } else {
       setError(null);
-      setPatient(admin);
-      router.push("/admin");
+      setPatient(patient);
+      router.push("/");
     }
   }
 
@@ -47,7 +47,7 @@ export default function Login() {
               autoComplete="off"
               onSubmit={submitHandle}
             >
-              <Typography variant="h5">Admin login</Typography>
+              <Typography variant="h5">Welcome back</Typography>
               <Typography sx={{ color: "#979797b5" }}>
                 Please enter your details
               </Typography>
@@ -77,6 +77,15 @@ export default function Login() {
                 {error}
               </Typography>
             )}
+            <Button
+              fullWidth
+              variant="text"
+              color="black"
+              sx={{ textTransform: "none" }}
+              onClick={() => router.push("/sign-up")}
+            >
+              Don't have an account? sign up for free
+            </Button>
           </ThemeProvider>
         </div>
         <img src="/images/laser-treatment.png" alt="laser-treatment" />
