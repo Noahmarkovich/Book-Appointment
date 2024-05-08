@@ -3,20 +3,19 @@ import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
 
 // async function main() {
-//   const hashedPassword = await bcrypt.hash("demo123", 10);
-//   const patient = await prisma.patient.create({
+//   const user = await prisma.user.create({
 //     data: {
-//       fullName: "Demo User",
-//       email: "demo@gmail.com",
-//       phoneNumber: "0501234568",
-//       password: hashedPassword,
+//       fullName: "Noah Markovich",
+//       email: "noah@gmail.com",
+//       password: "$2a$10$IN7YB9hWS0HiZYoVPcI4hOM5T78z61qd9CCYr1j54b2Gif1NaFpI.",
 //       avatar: {
-//         initials: "DU",
-//         color: "red",
+//         initials: "NM",
+//         color: "#800080",
 //       },
+//       role: "ADMIN",
 //     },
 //   });
-//   console.log(patient);
+//   console.log(user);
 // }
 
 // main()
@@ -28,3 +27,5 @@ export const prisma = new PrismaClient();
 //     await prisma.$disconnect();
 //     process.exit(1);
 //   });
+
+//   password : "Nn12345!"

@@ -44,7 +44,7 @@ export function AppHeader() {
   }, [patient, admin]);
 
   useEffect(() => {
-    const currentAdmin = getCookie("admin");
+    const currentAdmin = getCookie("user");
     const currentPatient = getCookie("patient");
 
     if (currentAdmin) {
@@ -57,7 +57,7 @@ export function AppHeader() {
 
   function onLogout() {
     if (admin) {
-      document.cookie = `admin="";max-age=0`;
+      document.cookie = `user="";max-age=0`;
       setAdmin(null);
     }
     if (patient) {

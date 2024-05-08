@@ -248,7 +248,7 @@ export function getPatients(searchInput) {
       }
     });
   }
-  return patients.map((patient) => {
+  return patients?.map((patient) => {
     delete patient.password;
     return patient;
   });

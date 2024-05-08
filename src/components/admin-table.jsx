@@ -26,16 +26,16 @@ import {
 import { useEffect, useState } from "react";
 import { PatientTreatmentsInput } from "./table-treatments-options";
 
-export function AdminTable({ patients, setPatients, handleSearchChange }) {
-  const [treatments, setTreatments] = useState();
+import { useSearchParams } from "next/navigation";
+export function AdminTable({
+  patients,
+  setPatients,
+  handleSearchChange,
+  treatments,
+}) {
   const [editPatientState, setEditPatientState] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
-
-  useEffect(() => {
-    const treatments = getTreatments();
-    setTreatments(treatments);
-  }, []);
 
   function handleChangePage(event, newPage) {
     setPage(newPage);
@@ -47,29 +47,42 @@ export function AdminTable({ patients, setPatients, handleSearchChange }) {
   }
 
   function editPatient(patientId) {
+    const patient = patients.find((patient) => patient.id === patientId);
+    console.log(patient);
     setEditPatientState({
       id: patientId,
-      treatments: getPatientById(patientId).treatments.map(
-        (patientTreatment) => {
-          return treatments.find(
-            (treatment) => patientTreatment.treatmentId === treatment.id
-          );
-        }
-      ),
+      treatments: patient.treatments.map((patientTreatment) => {
+        return treatments.find(
+          (treatment) => patientTreatment.treatmentId === treatment.id
+        );
+      }),
     });
   }
 
-  function onSubmitEdit() {
-    const patients = updatePatientTreatments(
-      editPatientState.id,
-      editPatientState.treatments
-    );
+  async function onSubmitEdit() {
+    const res = await fetch("/api/admin", {
+      method: "PUT",
+      body: JSON.stringify(editPatientState),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const patients = await res.json();
     setPatients(patients);
     setEditPatientState(null);
   }
 
-  function onRemovePatient(patientId) {
-    const updatedPatients = removePatient(patientId);
+  async function onRemovePatient(patientId) {
+    // const updatedPatients = removePatient(patientId);
+    const res = await fetch("/api/admin", {
+      method: "DELETE",
+      body: JSON.stringify(patientId),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const updatedPatients = await res.json();
+
     setPatients(updatedPatients);
   }
 
@@ -130,6 +143,7 @@ export function AdminTable({ patients, setPatients, handleSearchChange }) {
                 <PatientTreatmentsInput
                   patientTreatments={patient.treatments}
                   treatments={treatments}
+                  patientId={patient.id}
                   editedTreatments={
                     editPatientState?.id === patient.id
                       ? editPatientState?.treatments

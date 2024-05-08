@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
-  let currentCookie = request.cookies.get("admin");
+  let currentCookie = request.cookies.get("user");
   let currentUser;
   if (currentCookie) {
     currentUser = JSON.parse(currentCookie.value);
@@ -9,7 +9,7 @@ export function middleware(request) {
   if (!currentCookie) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
-  if (!currentUser.isAdmin) {
+  if (!currentUser.role === "ADMIN") {
     return NextResponse.redirect(new URL("/", request.url));
   }
 }

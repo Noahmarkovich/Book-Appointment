@@ -10,26 +10,37 @@ import { useContext, useState } from "react";
 export default function Login() {
   const [error, setError] = useState(null);
   const theme = useContext(AuthContext);
-  const { patient, setPatient } = theme;
+  const { admin, setAdmin } = theme;
   const router = useRouter();
 
-  function submitHandle(ev) {
+  async function submitHandle(ev) {
     ev.preventDefault();
     const formData = new FormData(ev.currentTarget);
     const credentials = {
       email: formData.get("email"),
       password: formData.get("password"),
     };
-    const admin = getAdmin(credentials);
-    if (typeof admin === "string") {
-      setError(admin);
-    } else {
-      setError(null);
-      setPatient(admin);
-      router.push("/admin");
+    try {
+      const res = await fetch("/api/auth/adminLogin", {
+        method: "POST",
+        body: JSON.stringify(credentials),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res.status === 401) {
+        setError("Wrong email or password");
+      } else {
+        setError(null);
+        const user = await res.json();
+        setAdmin(user);
+        router.push("/admin");
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
-
+  console.log(admin);
   return (
     <section className="login-page ">
       <div className="login-container">

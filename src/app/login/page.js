@@ -16,10 +16,8 @@ export default function LoginPage() {
   async function submitHandle(ev) {
     ev.preventDefault();
     const formData = new FormData(ev.currentTarget);
-    // const credentials = {
     const email = formData.get("email");
     const password = formData.get("password");
-    // };
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",

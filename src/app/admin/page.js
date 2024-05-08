@@ -1,31 +1,70 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
-import { getPatients, getPatientsTreatments } from "../services/service";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { getPatientsTreatments } from "../services/service";
 import { AdminTable } from "@/components/admin-table";
 import { AuthContext } from "@/context/authContext";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export default function Admin() {
   const [patients, setPatients] = useState();
-  const [searchInput, setSearchInput] = useState(null);
+  const [treatments, setTreatments] = useState();
+  const [searchInput, setSearchInput] = useState("");
   const theme = useContext(AuthContext);
   const { patient, setPatient } = theme;
 
   useEffect(() => {
-    const patients = getPatients(searchInput);
+    getPatients();
+    getTreatments();
+  }, []);
+
+  const filteredPatients = useMemo(() => {
+    if (searchInput) {
+      const searchTerm = searchInput.toLowerCase();
+      return patients.filter((patient) => {
+        const fullNameMatch = patient.fullName
+          .toLowerCase()
+          .includes(searchTerm);
+        const emailMatch = patient.email.toLowerCase().includes(searchTerm);
+        if (fullNameMatch || emailMatch) {
+          delete patient.password;
+          return patient;
+        }
+      });
+    }
+  }, [searchInput, patients]);
+  async function getPatients() {
+    const res = await fetch("/api/admin", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const patients = await res.json();
     setPatients(patients);
-  }, [searchInput]);
+  }
+  async function getTreatments() {
+    const res = await fetch("/api/admin/treatments", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const treatments = await res.json();
+    setTreatments(treatments);
+  }
 
   function handleSearchChange(ev) {
     setSearchInput(ev.target.value);
   }
-
+  console.log();
   return (
     <section className="admin-page">
       <div className="admin-table-container">
         <AdminTable
-          patients={patients}
+          patients={filteredPatients ?? patients}
           setPatients={setPatients}
+          treatments={treatments}
           handleSearchChange={handleSearchChange}
         />
       </div>

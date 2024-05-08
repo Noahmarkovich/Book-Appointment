@@ -14,7 +14,7 @@ export const AuthContextProvider = ({ children }) => {
     getCookie("patient") ? JSON.parse(getCookie("patient")) : ""
   );
   const [admin, setAdmin] = useState(
-    getCookie("admin") ? JSON.parse(getCookie("admin")) : ""
+    getCookie("user") ? JSON.parse(getCookie("user")) : ""
   );
 
   return (

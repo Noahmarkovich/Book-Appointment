@@ -3,22 +3,39 @@ import { makeAnAvatar } from "@/app/services/service";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
 
+// TODO: Add schema validation
+
+// const signUpSchema = Joi.schema({
+//   email: Joi.string().required(),
+// })
+
+const SIGN_UP_ERROR_CODE = {
+  VALIDATION_FAILED: "validation_failed",
+  EXISTING_PATIENT: "existing_patient",
+};
+
 export async function POST(request, res) {
   const data = await request.json();
 
+  // if(!signUpSchema.validate(data)){
+  //   return new Response("Missing information", {
+  //     status: 400,
+  //   });
+  // }
+
   if (!data.email || !data.password || !data.phoneNumber || !data.fullName) {
-    return new Response("Missing information", {
-      status: 401,
+    return new Response(SIGN_UP_ERROR_CODE.VALIDATION_FAILED, {
+      status: 400,
     });
   }
 
-  const isPatientExist = await prisma.patient.findUnique({
+  const existingPatient = await prisma.patient.findUnique({
     where: {
       email: data.email,
     },
   });
 
-  if (isPatientExist) {
+  if (existingPatient) {
     return new Response("Patient exists", {
       status: 400,
     });

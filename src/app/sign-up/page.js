@@ -59,6 +59,7 @@ export default function SignUp() {
         },
       });
       if (res.status === 400) {
+        // res.text();
         setError("User already exists");
       } else {
         setError(null);

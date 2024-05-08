@@ -45,7 +45,7 @@ export function AppointmentModal({
     const startDate = new Date(input.$d);
     let endDate = new Date(input.$d);
     const currentTreatment = patientTreatments.find(
-      (treatment) => treatment.label === appointmentToEdit.title
+      (treatment) => treatment.title === appointmentToEdit.title
     );
 
     endDate = new Date(
@@ -135,7 +135,7 @@ export function AppointmentModal({
       setAppointmentToEdit({
         ...appointmentToEdit,
         end: "",
-        title: value.label,
+        title: value.title,
       });
       return;
     }
@@ -145,14 +145,16 @@ export function AppointmentModal({
       setAppointmentToEdit({
         ...appointmentToEdit,
         end: "",
-        title: value.label,
+        title: value.title,
+        treatmentId: value.id,
       });
       return;
     }
     setAppointmentToEdit({
       ...appointmentToEdit,
       end: endDate,
-      title: value.label,
+      title: value.title,
+      treatmentId: value.id,
     });
   }
 
@@ -192,7 +194,7 @@ export function AppointmentModal({
             options={patients}
             value={currentPatient && currentPatient.email}
             isOptionEqualToValue={(option, value) =>
-              option === value || option.label === currentPatient.email
+              option === value || option.title === currentPatient.email
             }
             onChange={handleSelectPatientChange}
             sx={{ width: "100%", marginTop: "20px" }}
@@ -207,11 +209,12 @@ export function AppointmentModal({
           options={patientTreatments}
           value={appointmentToEdit.id && appointmentToEdit?.title}
           isOptionEqualToValue={(option, value) =>
-            option === value || option.label === appointmentToEdit.title
+            option === value || option.title === appointmentToEdit.title
           }
           getOptionDisabled={(option) => option.isDisable}
           onChange={handleSelectChange}
           sx={{ width: "100%", marginTop: "20px" }}
+          getOptionLabel={(option) => option.title ?? appointmentToEdit?.title}
           renderInput={(params) => (
             <TextField {...params} placeholder="Select treatment" />
           )}

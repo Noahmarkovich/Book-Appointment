@@ -1,4 +1,5 @@
 import { getTreatments } from "@/app/services/service";
+import { prisma } from "@/lib/prisma";
 import { useTheme } from "@emotion/react";
 import {
   Box,
@@ -11,7 +12,6 @@ import {
   OutlinedInput,
   Select,
 } from "@mui/material";
-import { useEffect, useState } from "react";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -23,8 +23,6 @@ const MenuProps = {
     },
   },
 };
-
-//PatientTreatmentsInput
 
 export function PatientTreatmentsInput({
   patientTreatments,
@@ -40,18 +38,22 @@ export function PatientTreatmentsInput({
   }
 
   function getTreatmentsTypes(treatments) {
-    const types = treatments.map((treatment) => treatment.type);
+    const types = treatments.map((treatment) => treatment.title);
     return types.join(", ");
   }
   const currentTreatments =
     editedTreatments ??
-    patientTreatments.map((patientTreatment) => {
+    patientTreatments?.map((patientTreatment) => {
+      const fullTreatmentDetails = treatments?.find(
+        (treatment) => treatment.id === patientTreatment.treatmentId
+      );
       return {
-        id: patientTreatment.treatmentId,
-        type: patientTreatment.label,
+        id: fullTreatmentDetails?.id,
+        title: fullTreatmentDetails?.title,
       };
     });
 
+  console.log(currentTreatments);
   return (
     <FormControl sx={{ m: 1, width: 300 }}>
       <InputLabel id="demo-multiple-checkbox-label">Treatments</InputLabel>
@@ -73,7 +75,7 @@ export function PatientTreatmentsInput({
                 (currTreatment) => currTreatment.id === treatment.id
               )}
             />
-            <ListItemText primary={treatment.type} />
+            <ListItemText primary={treatment.title} />
           </MenuItem>
         ))}
       </Select>
