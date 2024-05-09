@@ -65,6 +65,11 @@ model User {
   avatar   Json
 }
 
+model Content {
+  id      String @id @unique
+  content Json
+}
+
 enum Role {
   THERAPIST
   ADMIN

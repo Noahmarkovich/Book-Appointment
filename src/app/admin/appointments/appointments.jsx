@@ -17,13 +17,17 @@ import timeGrid from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { getData } from "@/app/services/admin.service";
 
-export function AppointmentsCmp({ fetchedAppointments }) {
+export function AppointmentsCmp({
+  fetchedAppointments,
+  fetchedPatients,
+  treatments,
+}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [error, setError] = useState();
   const theme = useContext(AuthContext);
   const { admin, setAdmin } = theme;
-  const [appointments, setAppointments] = useState(null);
+  const [appointments, setAppointments] = useState();
   const [patientTreatments, setPatientTreatments] = useState(null);
   const [appointmentToEdit, setAppointmentToEdit] = useState({
     title: "",
@@ -34,16 +38,15 @@ export function AppointmentsCmp({ fetchedAppointments }) {
   const [currentPatient, setCurrentPatient] = useState({});
   const [data, setData] = useState();
 
-  console.log(fetchedAppointments);
   useEffect(() => {
-    const patients = getPatients().map((patient) => {
+    const patients = fetchedPatients.map((patient) => {
       let newPatient = { ...patient };
       newPatient["label"] = patient.email;
       return newPatient;
     });
 
     setPatients(patients);
-  }, []);
+  }, [fetchedPatients]);
 
   useEffect(() => {
     const currentData = getData("appointments");
@@ -76,21 +79,19 @@ export function AppointmentsCmp({ fetchedAppointments }) {
   }, [fetchedAppointments, patientTreatments, currentPatient, data]);
 
   useEffect(() => {
-    if (admin.isAdmin) {
-      let appointments = getAppointments();
-
-      setAppointments(appointments);
+    if (admin.role === "ADMIN") {
+      setAppointments(fetchedAppointments);
     }
-  }, [admin]);
+  }, [admin, fetchedAppointments]);
 
-  // useMemo(() => {
-  //   fetchedAppointments?.map(
-  //     (appointment) =>
-  //       (appointment["patientName"] = getPatientById(
-  //         appointment.patientId
-  //       ).fullName)
-  //   );
-  // }, [fetchedAppointments]);
+  useMemo(() => {
+    appointments?.map(
+      (appointment) =>
+        (appointment["patientName"] = fetchedPatients.find(
+          (patient) => patient.id === appointment.patientId
+        ).fullName)
+    );
+  }, [fetchedPatients, appointments]);
 
   function handleSelect(info) {
     const isValidTime = isWithinBusinessHours(info.date);
@@ -137,7 +138,7 @@ export function AppointmentsCmp({ fetchedAppointments }) {
     setError(null);
   }
 
-  function onAddAppointment() {
+  async function onAddAppointment() {
     if (!appointmentToEdit.title) {
       setError("You must pick a treatment");
       return;
@@ -147,28 +148,54 @@ export function AppointmentsCmp({ fetchedAppointments }) {
       return;
     }
 
-    const newAppointments = addAppointment(
-      appointmentToEdit,
-      currentPatient.id
-    );
+    const newAppointment = {
+      ...appointmentToEdit,
+      patientId: currentPatient.id,
+    };
+
+    const res = await fetch("/api/appointments", {
+      method: "POST",
+      body: JSON.stringify(newAppointment),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const newAppointments = await res.json();
     setAppointments(newAppointments);
     handleClose();
   }
 
-  function onUpdateAppointment() {
+  async function onUpdateAppointment() {
     let updatedAppointment = appointmentToEdit;
     delete updatedAppointment.backgroundColor;
-    const filteredAppointments = updateAppointment(updatedAppointment);
-    setAppointments(filteredAppointments);
+    delete updatedAppointment.patientName;
+    const res = await fetch("/api/appointments", {
+      method: "PUT",
+      body: JSON.stringify(updatedAppointment),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const updatedAppointments = await res.json();
+    setAppointments(updatedAppointments);
     handleClose();
   }
+
   function handleEventClick(clickedAppointment) {
     const { id } = clickedAppointment.event;
-    const currentAppointment = fetchedAppointments.find(
+    const currentAppointment = appointments?.find(
       (appointment) => appointment.id === id
     );
-    const currentPatientTreatments = getPatientTreatments(
-      currentAppointment.patientId
+    const currentPatient = patients.find(
+      (patient) => patient.id === currentAppointment.patientId
+    );
+    const currentPatientTreatments = currentPatient.treatments.map(
+      (patientTreatment) => {
+        return treatments.find(
+          (treatment) => treatment.id === patientTreatment.treatmentId
+        );
+      }
     );
     setPatientTreatments(currentPatientTreatments);
 
@@ -176,16 +203,23 @@ export function AppointmentsCmp({ fetchedAppointments }) {
     handleOpen();
   }
 
-  function deleteAppointment() {
+  async function deleteAppointment() {
     const answer = confirm("Sure you want to cancel the appointment?");
     if (!answer) return;
-    const filteredAppointments = removeAppointment(appointmentToEdit);
-    setAppointments(filteredAppointments);
+    const res = await fetch("/api/appointments", {
+      method: "DELETE",
+      body: JSON.stringify(appointmentToEdit),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const updatedAppointments = await res.json();
+    setAppointments(updatedAppointments);
     handleClose();
   }
 
   function checkIfOverlap(endDate) {
-    const appointmentOverlap = fetchedAppointments.find(
+    const appointmentOverlap = appointments.find(
       (appointment) =>
         new Date(appointment.end).getTime() === endDate.getTime() ||
         new Date(appointment.start).getTime() === endDate.getTime() ||
@@ -219,6 +253,7 @@ export function AppointmentsCmp({ fetchedAppointments }) {
         currentPatient={currentPatient}
         setCurrentPatient={setCurrentPatient}
         user={admin ? "admin" : "patient"}
+        treatments={treatments}
       />
       <FullCalendar
         plugins={[dayGridPlugin, timeGrid, interactionPlugin]}
@@ -236,7 +271,7 @@ export function AppointmentsCmp({ fetchedAppointments }) {
         selectConstraint="businessHours"
         eventConstraint="businessHours"
         selectable={true}
-        events={fetchedAppointments}
+        events={appointments}
         eventClick={handleEventClick}
         eventTextColor={"black"}
         eventBackgroundColor="rgb(232 249 255)"

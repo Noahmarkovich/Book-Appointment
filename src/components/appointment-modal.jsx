@@ -40,6 +40,7 @@ export function AppointmentModal({
   currentPatient,
   setCurrentPatient,
   user,
+  treatments,
 }) {
   function handleChange(input) {
     const startDate = new Date(input.$d);
@@ -161,7 +162,15 @@ export function AppointmentModal({
   function handleSelectPatientChange(ev, value) {
     let currentPatient = value;
     setCurrentPatient(currentPatient);
-    setPatientTreatments(value.treatments);
+    const currentPatientTreatments = currentPatient.treatments.map(
+      (patientTreatment) => {
+        return treatments.find(
+          (treatment) => treatment.id === patientTreatment.treatmentId
+        );
+      }
+    );
+
+    setPatientTreatments(currentPatientTreatments);
   }
 
   return (
@@ -194,7 +203,7 @@ export function AppointmentModal({
             options={patients}
             value={currentPatient && currentPatient.email}
             isOptionEqualToValue={(option, value) =>
-              option === value || option.title === currentPatient.email
+              option === value || option.label === currentPatient.email
             }
             onChange={handleSelectPatientChange}
             sx={{ width: "100%", marginTop: "20px" }}
