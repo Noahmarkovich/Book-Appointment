@@ -35,10 +35,17 @@ export default async function Appointments() {
 
   const appointments = await prisma.appointment.findMany({});
 
+  const data = await prisma.content.findUnique({
+    where: {
+      id: "appointments",
+    },
+  });
+
   return (
     <AppointmentsClient
       patientTreatments={patientTreatments}
       appointmentsFromServer={appointments}
+      data={data}
     />
   );
 }

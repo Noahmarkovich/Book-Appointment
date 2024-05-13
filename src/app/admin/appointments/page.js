@@ -12,11 +12,18 @@ export default async function Appointments() {
 
   const treatments = await prisma.treatment.findMany({});
 
+  const data = await prisma.content.findUnique({
+    where: {
+      id: "appointments",
+    },
+  });
+  console.log(data);
   return (
     <AppointmentsCmp
       fetchedAppointments={appointments}
       fetchedPatients={patients}
       treatments={treatments}
+      data={data}
     />
   );
 }

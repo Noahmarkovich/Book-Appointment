@@ -1,13 +1,5 @@
 "use client";
-import {
-  addAppointment,
-  getAppointments,
-  getPatientById,
-  getPatientTreatments,
-  getPatients,
-  getTreatments,
-  updateAppointment,
-} from "@/app/services/service";
+
 import { AppointmentModal } from "@/components/appointment-modal";
 import { AuthContext } from "@/context/authContext";
 import FullCalendar from "@fullcalendar/react";
@@ -15,12 +7,12 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGrid from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { getData } from "@/app/services/admin.service";
 
 export function AppointmentsCmp({
   fetchedAppointments,
   fetchedPatients,
   treatments,
+  data,
 }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -36,7 +28,6 @@ export function AppointmentsCmp({
   });
   const [patients, setPatients] = useState();
   const [currentPatient, setCurrentPatient] = useState({});
-  const [data, setData] = useState();
 
   useEffect(() => {
     const patients = fetchedPatients.map((patient) => {
@@ -47,11 +38,6 @@ export function AppointmentsCmp({
 
     setPatients(patients);
   }, [fetchedPatients]);
-
-  useEffect(() => {
-    const currentData = getData("appointments");
-    setData(currentData);
-  }, []);
 
   const filteredTreatments = useMemo(() => {
     return patientTreatments?.map((treatment) => {

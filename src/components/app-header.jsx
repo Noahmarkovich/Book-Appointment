@@ -72,7 +72,7 @@ export function AppHeader() {
   return (
     <nav className="app-header">
       <div className="navigation-container">
-        <div className="logo-container">
+        <div className="logo-container" onClick={() => router.push("/")}>
           <img className="logo" src="/images/laser-icon.png" alt="logo" />
           <h2>Our clinic</h2>
         </div>

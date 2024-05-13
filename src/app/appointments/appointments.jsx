@@ -12,8 +12,8 @@ import { getData } from "../services/admin.service";
 export function AppointmentsClient({
   appointmentsFromServer,
   patientTreatments,
+  data,
 }) {
-  const [data, setData] = useState();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const [error, setError] = useState();
@@ -68,11 +68,6 @@ export function AppointmentsClient({
         return { ...treatment.treatment, label: treatment.treatment.title };
     });
   }, [appointments, patientTreatments, patient, data]);
-
-  useEffect(() => {
-    const currentData = getData("appointments");
-    setData(currentData);
-  }, []);
 
   function handleSelect(info) {
     const isValidTime = isWithinBusinessHours(info.date);

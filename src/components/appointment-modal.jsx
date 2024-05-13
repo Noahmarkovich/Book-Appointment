@@ -42,12 +42,15 @@ export function AppointmentModal({
   user,
   treatments,
 }) {
+  console.log(patientTreatments);
   function handleChange(input) {
     const startDate = new Date(input.$d);
     let endDate = new Date(input.$d);
+    console.log(appointmentToEdit);
     const currentTreatment = patientTreatments.find(
       (treatment) => treatment.title === appointmentToEdit.title
     );
+    console.log(currentTreatment);
 
     endDate = new Date(
       endDate.setMinutes(endDate.getMinutes() + currentTreatment.duration)
@@ -218,7 +221,7 @@ export function AppointmentModal({
           options={patientTreatments}
           value={appointmentToEdit.id && appointmentToEdit?.title}
           isOptionEqualToValue={(option, value) =>
-            option === value || option.title === appointmentToEdit.title
+            option === value || option.label === appointmentToEdit.title
           }
           getOptionDisabled={(option) => option.isDisable}
           onChange={handleSelectChange}

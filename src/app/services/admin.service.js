@@ -291,10 +291,8 @@ export function getData(dataId) {
   } else return data;
 }
 
-export function updateData(dataId, editedDataDictionary) {
-  let data = loadFromStorage("dataDB");
+export function updateData(data, dataId, editedDataDictionary) {
   let currentData = data.find((data) => data.id === dataId);
-  let currentDataIndex = data.findIndex((data) => data.id === dataId);
   editedDataDictionary.map((editedData) => {
     const keys = editedData.id.split(".");
     let nestedObject = currentData.content;
@@ -304,9 +302,7 @@ export function updateData(dataId, editedDataDictionary) {
     }
     nestedObject[keys[keys.length - 1]] = editedData.value;
   });
-  data[currentDataIndex] = currentData;
-  saveToStorage("dataDB", data);
-  return data;
+  return currentData;
 }
 
 export function getAdmin(credentials) {
