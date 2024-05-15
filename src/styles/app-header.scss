@@ -41,3 +41,19 @@
     }
   }
 }
+
+@media only screen and (max-width: 800px) {
+  .app-header {
+    padding: 10px;
+    .navigation-container {
+      width: 100%;
+      justify-content: space-between;
+      .logo-container {
+        h2 {
+          font-size: 1.2rem;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+}

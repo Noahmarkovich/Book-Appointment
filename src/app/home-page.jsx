@@ -6,31 +6,46 @@ import { ThemeProvider } from "@emotion/react";
 import { buttonTheme, typographyTheme } from "@/styles/theme/muiTheme";
 import { useRouter } from "next/navigation";
 import { SingleContent } from "@/components/single-content";
+import useScreenSize from "@/hooks/use-screen-size";
 
 export function HomePage({ data }) {
   const router = useRouter();
-
+  const screenSize = useScreenSize();
+  // className={styles.main}
   return (
-    <main className={styles.main}>
+    <main>
       <section className="home-page">
         <div className="introduction">
           <div className="text-container">
             <ThemeProvider theme={typographyTheme}>
-              <Typography variant="h2">
+              <Typography
+                variant={screenSize.width > 800 ? "h2" : "h4"}
+                textAlign={screenSize.width > 640 ? "left" : "center"}
+              >
                 {data?.content.aboutUs.title}
               </Typography>
               {data?.content.aboutUs.main.map((p) => (
-                <Typography key={p.id} variant="paragraphLightColor">
+                <Typography
+                  key={p.id}
+                  variant="paragraphLightColor"
+                  textAlign={screenSize.width > 640 ? "left" : "center"}
+                >
                   {p.p}
                 </Typography>
               ))}
             </ThemeProvider>
             <ThemeProvider theme={buttonTheme}>
-              <Stack spacing={2} direction="row">
+              <Stack
+                spacing={2}
+                direction="row"
+                justifyContent={screenSize.width <= 640 && "center"}
+              >
                 <Button
                   variant="contained"
                   color="mustered"
-                  sx={{ textTransform: "none" }}
+                  sx={{
+                    textTransform: "none",
+                  }}
                 >
                   Contact us
                 </Button>
@@ -50,11 +65,14 @@ export function HomePage({ data }) {
           </div>
         </div>
         <div className="why-choose-us">
-          <Typography id="choose-us-title" variant="h2">
+          <Typography
+            id="choose-us-title"
+            variant={screenSize.width > 800 ? "h2" : "h4"}
+          >
             {data?.content.whyChooseUs.title}
           </Typography>
           <div className="list-content">
-            {data?.content.whyChooseUs.listContent.map((reason, index) => {
+            {data?.content.whyChooseUs.listContent.map((reason) => {
               return <SingleContent key={reason.id} reason={reason} />;
             })}
           </div>

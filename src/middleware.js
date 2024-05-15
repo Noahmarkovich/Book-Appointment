@@ -14,16 +14,17 @@ export function middleware(request) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (userCookie) {
+      currentUser = JSON.parse(userCookie.value);
+    }
 
-  if (userCookie) {
-    currentUser = JSON.parse(userCookie.value);
-  }
-
-  if (!userCookie) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
-  }
-  if (!currentUser.role === "ADMIN") {
-    return NextResponse.redirect(new URL("/", request.url));
+    if (!userCookie) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    if (!currentUser.role === "ADMIN") {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 }
 

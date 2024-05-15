@@ -167,3 +167,15 @@
     }
   }
 }
+
+@media only screen and (max-width: 1200px) {
+  .appointments {
+    padding: 50px 10%;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .appointments {
+    padding: 50px 10px;
+  }
+}
