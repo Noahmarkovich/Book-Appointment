@@ -3,8 +3,8 @@ import { AppointmentsClient } from "./appointments";
 import { cookies } from "next/headers";
 
 export default async function Appointments() {
-  const theme = cookies().get("patient");
-  const patient = JSON.parse(theme?.value);
+  const patientCookie = cookies().get("patient");
+  const patient = JSON.parse(patientCookie?.value);
 
   const patientTreatments = await prisma.patient
     .findUnique({
@@ -26,12 +26,6 @@ export default async function Appointments() {
         },
       },
     });
-
-  const patientAppointments = await prisma.appointment.findMany({
-    where: {
-      patientId: patient.id,
-    },
-  });
 
   const appointments = await prisma.appointment.findMany({});
 

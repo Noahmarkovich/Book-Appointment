@@ -135,7 +135,6 @@ export function AppointmentsClient({
     const newAppointments = await res.json();
     setAppointments(newAppointments);
 
-    //setAppointments([...appointments,newAppointment ]);
     handleClose();
   }
 

@@ -1,7 +1,17 @@
+import { verifyAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function GET(request) {
+  const cookieStore = cookies();
+  const patient = cookieStore.get("patient");
+  const user = cookieStore.get("user");
+  if (!patient && !user) {
+    return new Response("Unauthorized ", {
+      status: 401,
+    });
+  }
   const appointments = await prisma.appointment.findMany();
   console.log(appointments);
 
@@ -9,6 +19,14 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  const cookieStore = cookies();
+  const patient = cookieStore.get("patient");
+  const user = cookieStore.get("user");
+  if (!patient && !user) {
+    return new Response("Unauthorized ", {
+      status: 401,
+    });
+  }
   const data = await request.json();
   if (!data.start || !data.end || !data.title) {
     return new Response("Missing appointment information", {
@@ -21,6 +39,14 @@ export async function POST(request) {
 }
 
 export async function PUT(request) {
+  const cookieStore = cookies();
+  const patient = cookieStore.get("patient");
+  const user = cookieStore.get("user");
+  if (!patient && !user) {
+    return new Response("Unauthorized ", {
+      status: 401,
+    });
+  }
   const data = await request.json();
   if (!data.start || !data.end || !data.title) {
     return new Response("Missing appointment information", {
@@ -38,6 +64,14 @@ export async function PUT(request) {
 }
 
 export async function DELETE(request) {
+  const cookieStore = cookies();
+  const patient = cookieStore.get("patient");
+  const user = cookieStore.get("user");
+  if (!patient && !user) {
+    return new Response("Unauthorized ", {
+      status: 401,
+    });
+  }
   const data = await request.json();
   await prisma.appointment.delete({
     where: {

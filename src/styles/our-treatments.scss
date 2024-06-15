@@ -4,10 +4,29 @@
   flex-direction: column;
   gap: 50px;
   align-items: center;
-
+  img {
+    max-width: 100%;
+  }
   .treatments {
     display: flex;
     gap: 50px;
     text-align: right;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .our-treatments {
+    padding: 50px 30px;
+    gap: 20px;
+
+    .treatments {
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 30px;
+      width: 100%;
+      justify-content: space-around;
+    }
   }
 }

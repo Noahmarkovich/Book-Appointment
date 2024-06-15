@@ -1,7 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function PUT(request) {
+  const cookieStore = cookies();
+  const userCookie = cookieStore.get("user");
+  if (!userCookie) {
+    return new Response("Unauthorized ", {
+      status: 401,
+    });
+  }
+  currentUser = JSON.parse(userCookie.value);
+  if (!currentUser.role === "ADMIN") {
+    return new Response("Unauthorized user", {
+      status: 401,
+    });
+  }
   const data = await request.json();
   const content = await prisma.content.update({
     where: {

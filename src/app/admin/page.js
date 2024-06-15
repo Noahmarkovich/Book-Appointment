@@ -1,10 +1,8 @@
 "use client";
 
 import { useContext, useEffect, useMemo, useState } from "react";
-import { getPatientsTreatments } from "../services/service";
 import { AdminTable } from "@/components/admin-table";
 import { AuthContext } from "@/context/authContext";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export default function Admin() {
   const [patients, setPatients] = useState();

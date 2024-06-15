@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 
 export async function POST(request) {
   const data = await request.json();
-
   if (!data.email || !data.password) {
     return new Response("Missing information", {
       status: 400,
