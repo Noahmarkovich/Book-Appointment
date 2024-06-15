@@ -15,7 +15,6 @@ import { ThemeProvider } from "@emotion/react";
 import { buttonTheme } from "@/styles/theme/muiTheme";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "@/context/authContext";
-import { getCookie } from "@/app/services/service";
 import useScreenSize from "@/hooks/use-screen-size";
 import MenuIcon from "@mui/icons-material/Menu";
 
