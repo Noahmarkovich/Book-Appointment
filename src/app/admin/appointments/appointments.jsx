@@ -65,7 +65,7 @@ export function AppointmentsCmp({
   }, [fetchedAppointments, patientTreatments, currentPatient, data]);
 
   useEffect(() => {
-    if (admin.role === "ADMIN") {
+    if (admin?.role === "ADMIN") {
       setAppointments(fetchedAppointments);
     }
   }, [admin, fetchedAppointments]);

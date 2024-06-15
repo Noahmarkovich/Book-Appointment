@@ -17,6 +17,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "@/context/authContext";
 import useScreenSize from "@/hooks/use-screen-size";
 import MenuIcon from "@mui/icons-material/Menu";
+import { cookieCheck } from "@/app/utils/cookies";
 
 const patientHeaderTitles = [
   { title: "About us", ref: "/" },

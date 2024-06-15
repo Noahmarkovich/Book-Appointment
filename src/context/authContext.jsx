@@ -27,11 +27,9 @@ export const AuthContextProvider = ({ children }) => {
       setPatient(JSON.parse(patientCookie));
     }
     if (userCookie) {
-      setPatient(JSON.parse(userCookie));
+      setAdmin(JSON.parse(userCookie));
     }
   }
-
-  console.log(patient, admin);
 
   return (
     <AuthContext.Provider value={{ patient, setPatient, admin, setAdmin }}>

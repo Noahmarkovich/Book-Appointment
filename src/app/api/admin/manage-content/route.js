@@ -10,13 +10,14 @@ export async function PUT(request) {
       status: 401,
     });
   }
-  currentUser = JSON.parse(userCookie.value);
+  const currentUser = JSON.parse(userCookie.value);
   if (!currentUser.role === "ADMIN") {
     return new Response("Unauthorized user", {
       status: 401,
     });
   }
   const data = await request.json();
+
   const content = await prisma.content.update({
     where: {
       id: data.id,
