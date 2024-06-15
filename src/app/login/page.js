@@ -93,7 +93,7 @@ export default function LoginPage() {
               sx={{ textTransform: "none" }}
               onClick={() => router.push("/sign-up")}
             >
-              Don't have an account? sign up for free
+              Don&apos;t have an account? sign up for free
             </Button>
           </ThemeProvider>
         </div>
