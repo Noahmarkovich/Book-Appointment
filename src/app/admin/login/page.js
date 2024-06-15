@@ -1,5 +1,4 @@
 "use client";
-import { getAdmin } from "@/app/services/admin.service";
 import { AuthContext } from "@/context/authContext";
 import { buttonTheme } from "@/styles/theme/muiTheme";
 import { ThemeProvider } from "@emotion/react";

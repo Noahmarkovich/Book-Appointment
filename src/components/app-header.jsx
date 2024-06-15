@@ -55,16 +55,19 @@ export function AppHeader() {
   }, [patient, admin]);
 
   useEffect(() => {
-    const currentAdmin = getCookie("user");
-    const currentPatient = getCookie("patient");
+    getTheCookie();
+  }, []);
 
-    if (currentAdmin) {
-      setAdmin(JSON.parse(currentAdmin));
+  async function getTheCookie() {
+    const patientCookie = await cookieCheck("patient");
+    const userCookie = await cookieCheck("user");
+    if (patientCookie) {
+      setPatient(JSON.parse(patientCookie));
     }
-    if (currentPatient) {
-      setPatient(JSON.parse(currentPatient));
+    if (userCookie) {
+      setPatient(JSON.parse(userCookie));
     }
-  }, [setPatient, setAdmin]);
+  }
 
   function onLogout() {
     if (admin) {

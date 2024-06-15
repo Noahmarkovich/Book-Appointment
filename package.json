@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -20,7 +21,7 @@
     "@mui/icons-material": "^5.15.11",
     "@mui/material": "^5.15.11",
     "@mui/x-date-pickers": "^6.19.4",
-    "@prisma/client": "^5.12.1",
+    "@prisma/client": "^5.15.0",
     "@prisma/extension-pulse": "^1.0.1",
     "bcrypt": "^5.1.1",
     "dayjs": "^1.11.10",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "eslint": "^8",
-    "eslint-config-next": "14.1.0"
+    "eslint-config-next": "14.1.0",
+    "prisma": "^5.15.0"
   }
 }
