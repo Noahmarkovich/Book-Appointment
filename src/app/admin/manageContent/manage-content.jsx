@@ -1,28 +1,22 @@
 "use client";
-import {
-  AppointmentsDictionary,
-  HomePageDictionary,
-  OurTreatmentsDictionary,
-  getData,
-  updateData,
-} from "@/app/services/admin.service";
+import { updateData } from "@/app/services/admin.service";
 import { buttonTheme } from "@/styles/theme/muiTheme";
 import { Button, Stack, ThemeProvider, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { makeId } from "@/app/services/service";
 import { ManageContentForm } from "@/components/manage-content-form";
+import { useRouter } from "next/navigation";
 
-export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
+export function ManageContentCmp({ fetchedData }) {
   const [data, setData] = useState(fetchedData);
   const [showedData, setShowedData] = useState();
   const [editedData, setEditedData] = useState();
   const [currentContentId, setCurrentContentId] = useState();
+  const router = useRouter();
 
   function createDictionary(receivedData) {
     const newData = flattenContent(receivedData);
     setShowedData(newData);
-
-    console.log(newData);
   }
 
   function flattenContent(content, prefix = "", mainKey = "") {
@@ -71,6 +65,7 @@ export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
     createDictionary(returnedData.content);
     setData(updatedData);
     setEditedData(null);
+    router.refresh();
   }
 
   function handleSingleChange(ev) {

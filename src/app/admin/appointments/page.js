@@ -17,7 +17,7 @@ export default async function Appointments() {
       id: "appointments",
     },
   });
-  console.log(data);
+
   return (
     <AppointmentsCmp
       fetchedAppointments={appointments}

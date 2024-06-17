@@ -63,6 +63,5 @@ export async function POST(request, res) {
   delete patient.password;
   cookies().set("patient", JSON.stringify(patient), { secure: true });
 
-  console.log(patientTreatment);
   return Response.json(patient);
 }

@@ -1,14 +1,6 @@
 "use client";
+
 import {
-  getPatient,
-  getPatientById,
-  getPatientTreatments,
-  getTreatments,
-  removePatient,
-  updatePatientTreatments,
-} from "@/app/services/service";
-import {
-  Avatar,
   Box,
   Button,
   Paper,
@@ -26,7 +18,6 @@ import {
 import { useEffect, useState } from "react";
 import { PatientTreatmentsInput } from "./table-treatments-options";
 
-import { useSearchParams } from "next/navigation";
 export function AdminTable({
   patients,
   setPatients,
@@ -48,7 +39,6 @@ export function AdminTable({
 
   function editPatient(patientId) {
     const patient = patients.find((patient) => patient.id === patientId);
-    console.log(patient);
     setEditPatientState({
       id: patientId,
       treatments: patient.treatments.map((patientTreatment) => {
@@ -73,7 +63,6 @@ export function AdminTable({
   }
 
   async function onRemovePatient(patientId) {
-    // const updatedPatients = removePatient(patientId);
     const res = await fetch("/api/admin", {
       method: "DELETE",
       body: JSON.stringify(patientId),

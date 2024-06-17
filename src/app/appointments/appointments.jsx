@@ -7,7 +7,6 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AppointmentModal } from "@/components/appointment-modal";
 import { AuthContext } from "@/context/authContext";
-import { getData } from "../services/admin.service";
 
 export function AppointmentsClient({
   appointmentsFromServer,
@@ -20,7 +19,6 @@ export function AppointmentsClient({
   const theme = useContext(AuthContext);
   const { patient, setPatient } = theme;
   const [appointments, setAppointments] = useState(appointmentsFromServer);
-  //   const [patientTreatments, setPatientTreatments] = useState(null);
   const [appointmentToEdit, setAppointmentToEdit] = useState({
     title: "",
     start: "",

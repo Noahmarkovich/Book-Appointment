@@ -1,7 +1,6 @@
 "use client";
 
 import { Button, Stack, Typography } from "@mui/material";
-import styles from "./page.module.css";
 import { ThemeProvider } from "@emotion/react";
 import { buttonTheme, typographyTheme } from "@/styles/theme/muiTheme";
 import { useRouter } from "next/navigation";
@@ -11,7 +10,7 @@ import useScreenSize from "@/hooks/use-screen-size";
 export function HomePage({ data }) {
   const router = useRouter();
   const screenSize = useScreenSize();
-  // className={styles.main}
+
   return (
     <main>
       <section className="home-page">
