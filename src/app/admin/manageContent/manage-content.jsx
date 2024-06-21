@@ -7,7 +7,7 @@ import { makeId } from "@/app/services/service";
 import { ManageContentForm } from "@/components/manage-content-form";
 import { useRouter } from "next/navigation";
 
-export function ManageContentCmp({ fetchedData }) {
+export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
   const [data, setData] = useState(fetchedData);
   const [showedData, setShowedData] = useState();
   const [editedData, setEditedData] = useState();
@@ -39,7 +39,11 @@ export function ManageContentCmp({ fetchedData }) {
   }
 
   function getSectionData(contentId) {
-    const section = data.find((data) => data.id === contentId);
+    let section = data.find((data) => data.id === contentId);
+    if (contentId === "our-treatments") {
+      section.content.treatments["treatments"] = fetchedTreatments;
+    }
+
     createDictionary(section.content);
 
     setCurrentContentId(contentId);

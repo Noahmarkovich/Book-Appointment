@@ -3,9 +3,9 @@ import useScreenSize from "@/hooks/use-screen-size";
 import { typographyTheme } from "@/styles/theme/muiTheme";
 import { ThemeProvider, Typography } from "@mui/material";
 
-export function OurTreatmentsCmp({ data }) {
+export function OurTreatmentsCmp({ data, treatments }) {
   const screenSize = useScreenSize();
-  if (!data) return <div>loading</div>;
+  if (!data || !treatments) return <div>loading</div>;
   return (
     <div className="our-treatments">
       <ThemeProvider theme={typographyTheme}>
@@ -24,7 +24,7 @@ export function OurTreatmentsCmp({ data }) {
         </Typography>
         <img src={`/images/${data.content.treatments.image}.jpg`} />
         <div className="treatments">
-          {data.content.treatments.treatments.map((treatment) => {
+          {treatments?.map((treatment) => {
             return (
               <div key={treatment.id}>
                 <Typography variant="h6">
