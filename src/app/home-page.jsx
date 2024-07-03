@@ -1,15 +1,14 @@
 "use client";
 
-import { Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography, useMediaQuery } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
 import { buttonTheme, typographyTheme } from "@/styles/theme/muiTheme";
 import { useRouter } from "next/navigation";
 import { SingleContent } from "@/components/single-content";
-import useScreenSize from "@/hooks/use-screen-size";
 
 export function HomePage({ data }) {
   const router = useRouter();
-  const screenSize = useScreenSize();
+  const mobileScreenSize = useMediaQuery("(max-width:800px)");
 
   return (
     <main>
@@ -18,8 +17,8 @@ export function HomePage({ data }) {
           <div className="text-container">
             <ThemeProvider theme={typographyTheme}>
               <Typography
-                variant={screenSize.width > 800 ? "h2" : "h4"}
-                textAlign={screenSize.width > 640 ? "left" : "center"}
+                variant={mobileScreenSize ? "h4" : "h2"}
+                textAlign={mobileScreenSize ? "center" : "left"}
               >
                 {data?.content.aboutUs.title}
               </Typography>
@@ -27,7 +26,7 @@ export function HomePage({ data }) {
                 <Typography
                   key={p.id}
                   variant="paragraphLightColor"
-                  textAlign={screenSize.width > 640 ? "left" : "center"}
+                  textAlign={mobileScreenSize ? "center" : "left"}
                 >
                   {p.p}
                 </Typography>
@@ -37,7 +36,7 @@ export function HomePage({ data }) {
               <Stack
                 spacing={2}
                 direction="row"
-                justifyContent={screenSize.width <= 640 && "center"}
+                justifyContent={mobileScreenSize && "center"}
               >
                 <Button
                   variant="contained"
@@ -66,7 +65,7 @@ export function HomePage({ data }) {
         <div className="why-choose-us">
           <Typography
             id="choose-us-title"
-            variant={screenSize.width > 800 ? "h2" : "h4"}
+            variant={mobileScreenSize ? "h4" : "h2"}
           >
             {data?.content.whyChooseUs.title}
           </Typography>

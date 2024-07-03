@@ -1,24 +1,23 @@
 "use client";
-import useScreenSize from "@/hooks/use-screen-size";
 import { typographyTheme } from "@/styles/theme/muiTheme";
-import { ThemeProvider, Typography } from "@mui/material";
+import { ThemeProvider, Typography, useMediaQuery } from "@mui/material";
 
 export function OurTreatmentsCmp({ data, treatments }) {
-  const screenSize = useScreenSize();
+  const mobileScreenSize = useMediaQuery("(max-width:800px)");
   if (!data || !treatments) return <div>loading</div>;
   return (
     <div className="our-treatments">
       <ThemeProvider theme={typographyTheme}>
-        <Typography variant={screenSize.width > 640 ? "h2" : "h4"}>
+        <Typography variant={mobileScreenSize ? "h4" : "h2"}>
           {data.content.treatments.title}
         </Typography>
         <Typography
           sx={{
             maxWidth: "70%",
             lineHeight: "1.5",
-            maxWidth: screenSize.width > 1000 ? "65%" : "100%",
+            maxWidth: mobileScreenSize ? "100%" : "65%",
           }}
-          variant={screenSize.width > 640 ? "h6" : "paragraphLightColor"}
+          variant={mobileScreenSize ? "paragraphLightColor" : "h6"}
         >
           {data.content.treatments.p}
         </Typography>

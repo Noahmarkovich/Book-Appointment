@@ -177,5 +177,29 @@
 @media only screen and (max-width: 640px) {
   .appointments {
     padding: 50px 10px;
+    .fc {
+      .fc-header-toolbar {
+        padding: 15px;
+
+        .fc-toolbar-chunk {
+          .fc-button-group {
+            .fc-dayGridMonth-button,
+            .fc-timeGridDay-button {
+              &:hover {
+                background-color: hsla(0, 0%, 84%, 0.125);
+              }
+
+              &:active {
+                background-color: hsla(0, 0%, 84%, 0.125);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .fc-timeGridWeek-button {
+      display: none;
+    }
   }
 }

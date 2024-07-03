@@ -7,6 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AppointmentModal } from "@/components/appointment-modal";
 import { AuthContext } from "@/context/authContext";
+import { useMediaQuery } from "@mui/material";
 
 export function AppointmentsClient({
   appointmentsFromServer,
@@ -24,6 +25,7 @@ export function AppointmentsClient({
     start: "",
     end: "",
   });
+  const matches = useMediaQuery("(max-width:800px)");
 
   useMemo(() => {
     if (patient) {
@@ -210,7 +212,7 @@ export function AppointmentsClient({
       />
       <FullCalendar
         plugins={[dayGridPlugin, timeGrid, interactionPlugin]}
-        initialView="timeGridWeek"
+        initialView={matches ? "timeGridDay" : "timeGridWeek"}
         headerToolbar={{
           left: "title,prev,next",
           right: "dayGridMonth,timeGridWeek,timeGridDay",
