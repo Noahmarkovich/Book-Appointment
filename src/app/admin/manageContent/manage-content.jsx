@@ -1,7 +1,13 @@
 "use client";
 import { updateData } from "@/app/services/admin.service";
 import { buttonTheme } from "@/styles/theme/muiTheme";
-import { Button, Stack, ThemeProvider, Typography } from "@mui/material";
+import {
+  Button,
+  Stack,
+  ThemeProvider,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { useState } from "react";
 import { makeId } from "@/app/services/service";
 import { ManageContentForm } from "@/components/manage-content-form";
@@ -13,6 +19,8 @@ export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
   const [editedData, setEditedData] = useState();
   const [currentContentId, setCurrentContentId] = useState();
   const router = useRouter();
+  const mobileScreenSize = useMediaQuery("(max-width:800px)");
+  const mobileMinScreenSize = useMediaQuery("(max-width:640px)");
 
   function createDictionary(receivedData) {
     const newData = flattenContent(receivedData);
@@ -160,10 +168,17 @@ export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
           >
             Pages
           </Typography>
-          <Stack direction="column" width={"fit-content"} spacing={2}>
+          <Stack
+            direction={
+              !mobileMinScreenSize && mobileScreenSize ? "row" : "column"
+            }
+            width={mobileScreenSize ? "100%" : "fit-content"}
+            spacing={1}
+          >
             {data?.map((content) => {
               return (
                 <Button
+                  fullWidth={mobileScreenSize}
                   variant="text"
                   onClick={() => getSectionData(content.id)}
                   key={content.id}

@@ -186,11 +186,7 @@
             .fc-dayGridMonth-button,
             .fc-timeGridDay-button {
               &:hover {
-                background-color: hsla(0, 0%, 84%, 0.125);
-              }
-
-              &:active {
-                background-color: hsla(0, 0%, 84%, 0.125);
+                background-color: hsla(0, 1%, 26%, 0.166);
               }
             }
           }

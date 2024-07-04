@@ -28,7 +28,7 @@ const mobileStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "100%",
+  width: "90%",
   bgcolor: "background.paper",
   border: "1px solid #000",
   boxShadow: 24,
@@ -187,6 +187,7 @@ export function AppointmentModal({
 
   return (
     <Modal
+      className="appointment-modal "
       open={open}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
@@ -241,24 +242,17 @@ export function AppointmentModal({
           )}
         />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "20px",
-            }}
-          >
+          <div className="dates-input-container">
             <DateTimePicker
               label="From"
-              sx={{ width: "45%" }}
+              sx={{ width: matches ? "100%" : "45%" }}
               onChange={handleChange}
               value={dayjs(appointmentToEdit.start)}
             />
             <div>-</div>
             <DateTimePicker
               label="To"
-              sx={{ width: "45%" }}
+              sx={{ width: matches ? "100%" : "45%" }}
               value={dayjs(appointmentToEdit.end)}
             />
           </div>

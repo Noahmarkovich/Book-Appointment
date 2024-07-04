@@ -39,3 +39,35 @@
     }
   }
 }
+
+@media only screen and (max-width: 800px) {
+  .edit-content {
+    flex-direction: column;
+    justify-content: flex-start;
+
+    .data-controllers {
+      padding: 20px;
+      .MuiStack-root {
+        .MuiButtonBase-root {
+          &:focus {
+            background-color: #030357;
+          }
+          &:hover {
+            background-color: #030357;
+            color: white;
+          }
+        }
+      }
+    }
+
+    .edit-data-container {
+      padding: 20px;
+      margin: 0;
+      .edit-data-form {
+        .form-container {
+          flex-direction: column;
+        }
+      }
+    }
+  }
+}
