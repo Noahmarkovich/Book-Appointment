@@ -29,7 +29,10 @@ export function AdminTable({
   const [page, setPage] = useState(0);
 
   const patientsToPresent = useMemo(() => {
-    return patients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    return patients?.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
   }, [page, rowsPerPage, patients]);
 
   function handleChangePage(event, newPage) {
