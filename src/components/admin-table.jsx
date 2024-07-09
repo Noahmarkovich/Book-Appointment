@@ -23,7 +23,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PatientTreatmentsInput } from "./table-treatments-options";
 
 import { useSearchParams } from "next/navigation";
@@ -36,6 +36,10 @@ export function AdminTable({
   const [editPatientState, setEditPatientState] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
+
+  const patientsToPresent = useMemo(() => {
+    return patients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, [page, rowsPerPage, patients]);
 
   function handleChangePage(event, newPage) {
     setPage(newPage);
@@ -127,7 +131,7 @@ export function AdminTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {patients?.map((patient) => (
+          {patientsToPresent?.map((patient) => (
             <TableRow
               key={patient.id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
