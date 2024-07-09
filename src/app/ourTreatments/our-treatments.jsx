@@ -29,8 +29,8 @@ export function OurTreatmentsCmp({ data, treatments }) {
                 <Typography variant="h6">
                   {treatment.type ?? treatment.title}
                 </Typography>
-                <Typography>{treatment.price} :מחיר</Typography>
-                <Typography>{treatment.duration} :אורך טיפול</Typography>
+                <Typography>Price :{treatment.price} </Typography>
+                <Typography>Duration :{treatment.duration} </Typography>
               </div>
             );
           })}
