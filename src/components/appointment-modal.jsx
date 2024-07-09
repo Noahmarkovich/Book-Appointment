@@ -5,12 +5,12 @@ import {
   Stack,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import Modal from "@mui/material/Modal";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useState } from "react";
 
 const style = {
   position: "absolute",
@@ -18,6 +18,17 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 550,
+  bgcolor: "background.paper",
+  border: "1px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+const mobileStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "90%",
   bgcolor: "background.paper",
   border: "1px solid #000",
   boxShadow: 24,
@@ -42,15 +53,13 @@ export function AppointmentModal({
   user,
   treatments,
 }) {
-  console.log(patientTreatments);
+  const matches = useMediaQuery("(max-width:640px)");
   function handleChange(input) {
     const startDate = new Date(input.$d);
     let endDate = new Date(input.$d);
-    console.log(appointmentToEdit);
     const currentTreatment = patientTreatments.find(
       (treatment) => treatment.title === appointmentToEdit.title
     );
-    console.log(currentTreatment);
 
     endDate = new Date(
       endDate.setMinutes(endDate.getMinutes() + currentTreatment.duration)
@@ -178,12 +187,13 @@ export function AppointmentModal({
 
   return (
     <Modal
+      className="appointment-modal "
       open={open}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
+      <Box sx={matches ? mobileStyle : style}>
         <Typography
           id="modal-modal-title"
           variant="h6"
@@ -232,24 +242,17 @@ export function AppointmentModal({
           )}
         />
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "20px",
-            }}
-          >
+          <div className="dates-input-container">
             <DateTimePicker
               label="From"
-              sx={{ width: "45%" }}
+              sx={{ width: matches ? "100%" : "45%" }}
               onChange={handleChange}
               value={dayjs(appointmentToEdit.start)}
             />
             <div>-</div>
             <DateTimePicker
               label="To"
-              sx={{ width: "45%" }}
+              sx={{ width: matches ? "100%" : "45%" }}
               value={dayjs(appointmentToEdit.end)}
             />
           </div>

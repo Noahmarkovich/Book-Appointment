@@ -55,7 +55,7 @@ export default function Admin() {
   function handleSearchChange(ev) {
     setSearchInput(ev.target.value);
   }
-  console.log();
+
   return (
     <section className="admin-page">
       <div className="admin-table-container">

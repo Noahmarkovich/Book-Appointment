@@ -1,28 +1,30 @@
 "use client";
-import {
-  AppointmentsDictionary,
-  HomePageDictionary,
-  OurTreatmentsDictionary,
-  getData,
-  updateData,
-} from "@/app/services/admin.service";
+import { updateData } from "@/app/services/admin.service";
 import { buttonTheme } from "@/styles/theme/muiTheme";
-import { Button, Stack, ThemeProvider, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import {
+  Button,
+  Stack,
+  ThemeProvider,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
+import { useState } from "react";
 import { makeId } from "@/app/services/service";
 import { ManageContentForm } from "@/components/manage-content-form";
+import { useRouter } from "next/navigation";
 
 export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
   const [data, setData] = useState(fetchedData);
   const [showedData, setShowedData] = useState();
   const [editedData, setEditedData] = useState();
   const [currentContentId, setCurrentContentId] = useState();
+  const router = useRouter();
+  const mobileScreenSize = useMediaQuery("(max-width:800px)");
+  const mobileMinScreenSize = useMediaQuery("(max-width:640px)");
 
   function createDictionary(receivedData) {
     const newData = flattenContent(receivedData);
     setShowedData(newData);
-
-    console.log(newData);
   }
 
   function flattenContent(content, prefix = "", mainKey = "") {
@@ -45,7 +47,11 @@ export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
   }
 
   function getSectionData(contentId) {
-    const section = data.find((data) => data.id === contentId);
+    let section = data.find((data) => data.id === contentId);
+    if (contentId === "our-treatments") {
+      section.content.treatments["treatments"] = fetchedTreatments;
+    }
+
     createDictionary(section.content);
 
     setCurrentContentId(contentId);
@@ -71,6 +77,7 @@ export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
     createDictionary(returnedData.content);
     setData(updatedData);
     setEditedData(null);
+    router.refresh();
   }
 
   function handleSingleChange(ev) {
@@ -161,10 +168,17 @@ export function ManageContentCmp({ fetchedData, fetchedTreatments }) {
           >
             Pages
           </Typography>
-          <Stack direction="column" width={"fit-content"} spacing={2}>
+          <Stack
+            direction={
+              !mobileMinScreenSize && mobileScreenSize ? "row" : "column"
+            }
+            width={mobileScreenSize ? "100%" : "fit-content"}
+            spacing={1}
+          >
             {data?.map((content) => {
               return (
                 <Button
+                  fullWidth={mobileScreenSize}
                   variant="text"
                   onClick={() => getSectionData(content.id)}
                   key={content.id}

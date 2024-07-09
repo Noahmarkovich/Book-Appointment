@@ -1,5 +1,35 @@
 .admin-page {
   .admin-table-container {
     padding: 2rem 6rem;
+    overflow-x: auto;
+    .css-11xur9t-MuiPaper-root-MuiTableContainer-root {
+      &::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(167, 167, 167, 0.775);
+        border-radius: 5px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(247, 247, 247, 0.878);
+      }
+
+      // For Internet Explorer
+      & {
+        scrollbar-face-color: gray;
+        scrollbar-track-color: pink;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .admin-page {
+    .admin-table-container {
+      padding: 2rem 1rem;
+    }
   }
 }

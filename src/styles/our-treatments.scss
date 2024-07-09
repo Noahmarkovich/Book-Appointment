@@ -5,7 +5,7 @@
   gap: 50px;
   align-items: center;
   img {
-    max-width: 100%;
+    max-width: 50%;
   }
   .treatments {
     display: flex;
@@ -16,7 +16,7 @@
   }
 }
 
-@media only screen and (max-width: 640px) {
+@media only screen and (max-width: 800px) {
   .our-treatments {
     padding: 50px 30px;
     gap: 20px;
@@ -27,6 +27,10 @@
       gap: 30px;
       width: 100%;
       justify-content: space-around;
+    }
+
+    img {
+      max-width: 100%;
     }
   }
 }
