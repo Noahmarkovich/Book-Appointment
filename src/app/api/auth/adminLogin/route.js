@@ -16,11 +16,10 @@ export async function POST(request) {
       email: data.email,
     },
   });
-  console.log(user);
+
   const match = await bcrypt.compare(data.password, user.password);
   if (match) {
     delete user.password;
-    console.log(user);
     cookies().set("user", JSON.stringify(user), { secure: true });
     return Response.json(user);
   } else

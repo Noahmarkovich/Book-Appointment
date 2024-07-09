@@ -1,2 +1,15 @@
 .appointment-modal {
+  .dates-input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+}
+
+@media only screen and (max-width: 640px) {
+  .dates-input-container {
+    flex-direction: column;
+    width: 100%;
+  }
 }

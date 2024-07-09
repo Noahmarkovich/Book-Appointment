@@ -39,7 +39,7 @@ export default function Login() {
       console.log(err);
     }
   }
-  console.log(admin);
+
   return (
     <section className="login-page ">
       <div className="login-container">

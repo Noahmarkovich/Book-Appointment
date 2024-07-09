@@ -17,6 +17,7 @@
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
+    "@googlemaps/js-api-loader": "^1.16.6",
     "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.15.11",
     "@mui/material": "^5.15.11",

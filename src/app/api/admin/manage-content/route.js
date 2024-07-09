@@ -16,9 +16,29 @@ export async function PUT(request) {
       status: 401,
     });
   }
-  const data = await request.json();
-
-  const content = await prisma.content.update({
+  let data = await request.json();
+  const fullData = JSON.parse(JSON.stringify(data));
+  if (data.id === "our-treatments") {
+    const treatments = data.content.treatments.treatments;
+    delete data.content.treatments.treatments;
+    for (const treatment of treatments) {
+      await prisma.treatment.upsert({
+        where: { id: treatment.id },
+        update: {
+          price: treatment.price,
+          title: treatment.title,
+          duration: treatment.duration,
+        },
+        create: {
+          id: treatment.id,
+          price: treatment.price,
+          title: treatment.title,
+          duration: treatment.duration,
+        },
+      });
+    }
+  }
+  let content = await prisma.content.update({
     where: {
       id: data.id,
     },
@@ -26,26 +46,6 @@ export async function PUT(request) {
       content: data.content,
     },
   });
-  //TODO: check how I can update treatments.
 
-  //   if (data.id === "our-treatments") {
-  //     await data.content.treatments.treatments.map((treatment) => {
-  //       console.log(treatment);
-  //       prisma.treatment.upsert({
-  //         where: { id: treatment.id },
-  //         update: {
-  //           title: treatment.title,
-  //           duration: treatment.duration,
-  //           price: treatment.price,
-  //         },
-  //         create: {
-  //           title: treatment.title,
-  //           duration: treatment.duration,
-  //           price: treatment.price,
-  //         },
-  //       });
-  //     });
-  //   }
-
-  return NextResponse.json(content);
+  return NextResponse.json(fullData);
 }

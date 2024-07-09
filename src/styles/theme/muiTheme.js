@@ -23,5 +23,10 @@ export const typographyTheme = createTheme({
       color: "#979797de",
       fontSize: "1rem",
     },
+    normal: {
+      color: "black",
+      fontSize: "1rem",
+      lineHeight: "1.5",
+    },
   },
 });

@@ -53,7 +53,6 @@ export function PatientTreatmentsInput({
       };
     });
 
-  console.log(currentTreatments);
   return (
     <FormControl sx={{ m: 1, width: 300 }}>
       <InputLabel id="demo-multiple-checkbox-label">Treatments</InputLabel>

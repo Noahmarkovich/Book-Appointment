@@ -2,29 +2,45 @@ import { prisma } from "@/lib/prisma";
 import { makeAnAvatar } from "@/app/services/service";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-// TODO: Add schema validation
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+const nameRegex = /^[A-Za-z ]+$/;
+const phoneNumberRegex =
+  /^(?:(?:(\+?972|\(\+?972\)|\+?\(972\))(?:\s|\.|-)?([1-9]\d?))|(0[23489]{1})|(0[57]{1}[0-9]))(?:\s|\.|-)?([^0\D]{1}\d{2}(?:\s|\.|-)?\d{4})$/;
+const patientSchema = yup
+  .object({
+    fullName: yup
+      .string()
+      .matches(nameRegex, "Only English letters")
+      .required(),
+    email: yup.string().email("Must be a valid email").required(),
+    password: yup
+      .string()
+      .min(8, "Password is too short - should be 8 chars minimum.")
+      .matches(/[a-zA-Z]/, "Password can only contain Latin letters.")
+      .matches(/(?=.*[A-Z])/, "Password must consist of one Capital letter.")
+      .matches(/(?=.*\d)/, "Password must consist of one digit.")
+      .required("No password provided."),
 
-// const signUpSchema = Joi.schema({
-//   email: Joi.string().required(),
-// })
+    phoneNumber: yup
+      .string()
+      .matches(phoneNumberRegex, "Must be a valid phone number")
+      .required(),
+  })
+  .required();
 
 const SIGN_UP_ERROR_CODE = {
-  VALIDATION_FAILED: "validation_failed",
   EXISTING_PATIENT: "existing_patient",
 };
 
 export async function POST(request, res) {
   const data = await request.json();
-
-  // if(!signUpSchema.validate(data)){
-  //   return new Response("Missing information", {
-  //     status: 400,
-  //   });
-  // }
-
-  if (!data.email || !data.password || !data.phoneNumber || !data.fullName) {
-    return new Response(SIGN_UP_ERROR_CODE.VALIDATION_FAILED, {
+  try {
+    await patientSchema.validate(data);
+  } catch (error) {
+    return new Response(error.errors, {
       status: 400,
     });
   }
@@ -36,7 +52,7 @@ export async function POST(request, res) {
   });
 
   if (existingPatient) {
-    return new Response("Patient exists", {
+    return new Response(SIGN_UP_ERROR_CODE.EXISTING_PATIENT, {
       status: 400,
     });
   }
@@ -63,6 +79,5 @@ export async function POST(request, res) {
   delete patient.password;
   cookies().set("patient", JSON.stringify(patient), { secure: true });
 
-  console.log(patientTreatment);
   return Response.json(patient);
 }

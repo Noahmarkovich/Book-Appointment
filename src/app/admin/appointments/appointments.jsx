@@ -7,6 +7,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGrid from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { useMediaQuery } from "@mui/material";
 
 export function AppointmentsCmp({
   fetchedAppointments,
@@ -28,6 +29,7 @@ export function AppointmentsCmp({
   });
   const [patients, setPatients] = useState();
   const [currentPatient, setCurrentPatient] = useState({});
+  const mobileScreenSize = useMediaQuery("(max-width:800px)");
 
   useEffect(() => {
     const patients = fetchedPatients.map((patient) => {
@@ -243,7 +245,7 @@ export function AppointmentsCmp({
       />
       <FullCalendar
         plugins={[dayGridPlugin, timeGrid, interactionPlugin]}
-        initialView="timeGridWeek"
+        initialView={mobileScreenSize ? "timeGridDay" : "timeGridWeek"}
         headerToolbar={{
           left: "title,prev,next",
           right: "dayGridMonth,timeGridWeek,timeGridDay",

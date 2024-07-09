@@ -26,3 +26,23 @@
     }
   }
 }
+
+@media only screen and (max-width: 800px) {
+  .login-page {
+    display: block;
+    background: white;
+    .login-container {
+      flex-direction: column-reverse;
+      box-shadow: none;
+      border-radius: 0;
+      .form-container {
+        width: 100%;
+        padding: 40px;
+      }
+      img {
+        width: 100%;
+        aspect-ratio: auto;
+      }
+    }
+  }
+}

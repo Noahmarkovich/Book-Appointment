@@ -9,13 +9,13 @@ import {
   Menu,
   MenuItem,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { ThemeProvider } from "@emotion/react";
 import { buttonTheme } from "@/styles/theme/muiTheme";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "@/context/authContext";
-import useScreenSize from "@/hooks/use-screen-size";
 import MenuIcon from "@mui/icons-material/Menu";
 import { cookieCheck } from "@/app/utils/cookies";
 
@@ -26,16 +26,16 @@ const patientHeaderTitles = [
 ];
 const adminHeaderTitles = [
   { title: "Manage patients", ref: "/admin" },
-  { title: "Manage Content", ref: "/admin/manageContent" },
+  { title: "Manage content and settings", ref: "/admin/manageContent" },
   { title: "Manage appointment", ref: "/admin/appointments" },
 ];
 
 export function AppHeader() {
+  const mobileScreenSize = useMediaQuery("(max-width:800px)");
   const router = useRouter();
   const theme = useContext(AuthContext);
   const { patient, setPatient, admin, setAdmin } = theme;
   const [anchorEl, setAnchorEl] = useState(null);
-  const screenSize = useScreenSize();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -95,7 +95,7 @@ export function AppHeader() {
           <img className="logo" src="/images/laser-icon.png" alt="logo" />
           <h2>Our clinic</h2>
         </div>
-        {screenSize.width > 800 ? (
+        {!mobileScreenSize ? (
           <div className="links-container">
             {navLinksToShow.map((title, index) => (
               <Link href={title.ref} key={index}>
@@ -175,7 +175,7 @@ export function AppHeader() {
           </div>
         )}
       </div>
-      {screenSize.width > 800 && (
+      {!mobileScreenSize && (
         <div>
           <ThemeProvider theme={buttonTheme}>
             {patient || admin ? (

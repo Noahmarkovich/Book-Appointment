@@ -12,9 +12,7 @@ export const AuthContext = createContext({
 
 export const AuthContextProvider = ({ children }) => {
   const [patient, setPatient] = useState();
-  // getCookie("patient") ? JSON.parse(getCookie("patient")) : ""
   const [admin, setAdmin] = useState();
-  // getCookie("user") ? JSON.parse(getCookie("user")) : ""
 
   useEffect(() => {
     getTheCookie();
