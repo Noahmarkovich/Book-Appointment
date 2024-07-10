@@ -78,7 +78,7 @@ export function AppointmentsCmp({
       (appointment) =>
         (appointment["patientName"] = fetchedPatients.find(
           (patient) => patient.id === appointment.patientId
-        ).fullName)
+        )?.fullName)
     );
   }, [fetchedPatients, appointments]);
 
