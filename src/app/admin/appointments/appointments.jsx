@@ -46,16 +46,17 @@ export function AppointmentsCmp({
       const treatmentAppointments = fetchedAppointments.filter(
         (appointment) =>
           appointment.patientId === currentPatient?.id &&
-          appointment.title === treatment.label
+          appointment.title === treatment.title
       );
-      if (!treatmentAppointments || treatmentAppointments.length === 0)
+      if (!treatmentAppointments || treatmentAppointments.length === 0) {
         return treatment;
+      }
       const isNeedDisable = treatmentAppointments?.find(
         (treatmentAppointment) =>
           new Date(treatmentAppointment.start) <
           new Date(
             new Date().setMonth(
-              new Date().getMonth() + +data.content.durationBetweenTreatments
+              new Date().getMonth() + +data?.content.durationBetweenTreatments
             )
           )
       );
@@ -210,7 +211,6 @@ export function AppointmentsCmp({
     const appointmentOverlap = appointments.find(
       (appointment) =>
         new Date(appointment.end).getTime() === endDate.getTime() ||
-        new Date(appointment.start).getTime() === endDate.getTime() ||
         (new Date(appointment.start).getTime() < endDate.getTime() &&
           new Date(appointment.end).getTime() > endDate.getTime())
     );
@@ -266,11 +266,10 @@ export function AppointmentsCmp({
         eventBorderColor="#8080804a"
         eventContent={function (arg) {
           let italicEl = document.createElement("a");
-          let italicEl2 = document.createElement("a");
-          italicEl.innerHTML = arg.event.extendedProps.patientName;
-          italicEl2.innerHTML = arg.event.title;
 
-          let arrayOfDomNodes = [italicEl, italicEl2];
+          italicEl.innerHTML = arg.event.extendedProps.patientName;
+          italicEl.title = "Click for appointment details";
+          let arrayOfDomNodes = [italicEl];
           return { domNodes: arrayOfDomNodes };
         }}
         eventClassNames={function (arg) {

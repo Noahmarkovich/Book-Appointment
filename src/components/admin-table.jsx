@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { PatientTreatmentsInput } from "./table-treatments-options";
+import Loading from "@/app/loading";
 
 export function AdminTable({
   patients,
@@ -104,85 +105,89 @@ export function AdminTable({
           onChange={handleSearchChange}
         />
       </Box>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow sx={{ textTransform: "uppercase" }}>
-            <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Email
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Phone number
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Treatments
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold" }} align="center">
-              Actions
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {patientsToPresent?.map((patient) => (
-            <TableRow
-              key={patient.id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {patient.fullName}
+      {patientsToPresent ? (
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow sx={{ textTransform: "uppercase" }}>
+              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Email
               </TableCell>
-              <TableCell align="center">{patient.email}</TableCell>
-              <TableCell align="center">
-                {patient.phone ?? patient.phoneNumber}
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Phone number
               </TableCell>
-              <TableCell align="center">
-                <PatientTreatmentsInput
-                  patientTreatments={patient.treatments}
-                  treatments={treatments}
-                  patientId={patient.id}
-                  editedTreatments={
-                    editPatientState?.id === patient.id
-                      ? editPatientState?.treatments
-                      : undefined
-                  }
-                  setEditedTreatments={(treatments) =>
-                    setEditPatientState({
-                      id: patient.id,
-                      treatments,
-                    })
-                  }
-                />
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Treatments
               </TableCell>
-              <TableCell align="left">
-                <Stack
-                  spacing={2}
-                  direction="row"
-                  sx={{ justifyContent: "center" }}
-                >
-                  {editPatientState?.id === patient.id && (
-                    <Button onClick={() => setEditPatientState(null)}>
-                      Cancel
-                    </Button>
-                  )}
-                  {editPatientState?.id === patient.id ? (
-                    <Button onClick={() => onSubmitEdit()}>Save</Button>
-                  ) : (
-                    <Button onClick={() => editPatient(patient.id)}>
-                      Edit
-                    </Button>
-                  )}
-                  <Button
-                    onClick={() => onRemovePatient(patient.id)}
-                    variant="contained"
-                  >
-                    Delete patient
-                  </Button>
-                </Stack>
+              <TableCell sx={{ fontWeight: "bold" }} align="center">
+                Actions
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {patientsToPresent?.map((patient) => (
+              <TableRow
+                key={patient.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {patient.fullName}
+                </TableCell>
+                <TableCell align="center">{patient.email}</TableCell>
+                <TableCell align="center">
+                  {patient.phone ?? patient.phoneNumber}
+                </TableCell>
+                <TableCell align="center">
+                  <PatientTreatmentsInput
+                    patientTreatments={patient.treatments}
+                    treatments={treatments}
+                    patientId={patient.id}
+                    editedTreatments={
+                      editPatientState?.id === patient.id
+                        ? editPatientState?.treatments
+                        : undefined
+                    }
+                    setEditedTreatments={(treatments) =>
+                      setEditPatientState({
+                        id: patient.id,
+                        treatments,
+                      })
+                    }
+                  />
+                </TableCell>
+                <TableCell align="left">
+                  <Stack
+                    spacing={2}
+                    direction="row"
+                    sx={{ justifyContent: "center" }}
+                  >
+                    {editPatientState?.id === patient.id && (
+                      <Button onClick={() => setEditPatientState(null)}>
+                        Cancel
+                      </Button>
+                    )}
+                    {editPatientState?.id === patient.id ? (
+                      <Button onClick={() => onSubmitEdit()}>Save</Button>
+                    ) : (
+                      <Button onClick={() => editPatient(patient.id)}>
+                        Edit
+                      </Button>
+                    )}
+                    <Button
+                      onClick={() => onRemovePatient(patient.id)}
+                      variant="contained"
+                    >
+                      Delete patient
+                    </Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <Loading />
+      )}
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"

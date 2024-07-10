@@ -34,7 +34,11 @@ export function AppointmentsClient({
           let newAppointment = appointment;
           newAppointment["backgroundColor"] = "rgb(253 226 244)";
           return newAppointment;
-        } else return appointment;
+        } else {
+          let notCurrentPatientAppointment = appointment;
+          delete notCurrentPatientAppointment.title;
+          return notCurrentPatientAppointment;
+        }
       });
     }
   }, [appointments, patient]);
@@ -183,7 +187,7 @@ export function AppointmentsClient({
     const appointmentOverlap = appointments.find(
       (appointment) =>
         new Date(appointment.end).getTime() === endDate.getTime() ||
-        new Date(appointment.start).getTime() === endDate.getTime() ||
+        // new Date(appointment.start).getTime() === endDate.getTime() ||
         (new Date(appointment.start).getTime() < endDate.getTime() &&
           new Date(appointment.end).getTime() > endDate.getTime())
     );
@@ -231,6 +235,12 @@ export function AppointmentsClient({
         eventTextColor={"black"}
         eventBackgroundColor="rgb(232 249 255)"
         eventBorderColor="#8080804a"
+        eventDidMount={function (info) {
+          console.log(info.event);
+          let element = info.el;
+          element.title = "Click for appointment details";
+          return element;
+        }}
         eventClassNames={function (arg) {
           if (
             Math.floor(

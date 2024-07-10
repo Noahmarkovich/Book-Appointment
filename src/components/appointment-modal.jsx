@@ -54,6 +54,7 @@ export function AppointmentModal({
   treatments,
 }) {
   const matches = useMediaQuery("(max-width:640px)");
+
   function handleChange(input) {
     const startDate = new Date(input.$d);
     let endDate = new Date(input.$d);
@@ -214,7 +215,7 @@ export function AppointmentModal({
           <Autocomplete
             disablePortal
             options={patients}
-            value={currentPatient && currentPatient.email}
+            value={currentPatient ? currentPatient.email : null}
             isOptionEqualToValue={(option, value) =>
               option === value || option.label === currentPatient.email
             }
@@ -229,9 +230,9 @@ export function AppointmentModal({
           disablePortal
           id="combo-box-demo"
           options={patientTreatments}
-          value={appointmentToEdit.id && appointmentToEdit?.title}
+          value={appointmentToEdit.id ? appointmentToEdit?.title : null}
           isOptionEqualToValue={(option, value) =>
-            option === value || option.label === appointmentToEdit.title
+            option === value || option.title === appointmentToEdit.title
           }
           getOptionDisabled={(option) => option.isDisable}
           onChange={handleSelectChange}
